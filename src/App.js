@@ -55,40 +55,22 @@ class App extends Component {
     this.setState({openDetail: true, detailTitle: e.target.value});
   }
 
-  // setUnit = (item, e) => {
-  //   const items = Object.assign([], this.state.items);
-  //   const index = items.indexOf(item);
-  //   items[index].unit = e.target.value;
-  //   this.setState({items:items});    
-  // }
-
   setUnit = (item,e) => {
-    const _newItem = Object.assign({}, this.state.selectedItem);
-     _newItem.unit = e.children; 
-    this.setState({selectedItem: _newItem});
-    console.log(this.state.selectedItem.unit);
+    const items = Object.assign([], this.state.items);
+    const index = this.findItemIndexByName(this.state.selectedItem);
+    const _item = items[index];
+    _item.unit = e.children;
+    _item.qty = this.state.selectedItem.qty;
+    items[index] = Object.assign({},_item);
+    this.setState({items:items, selectedItem:_item, openDetail:false});
   }
-
+ 
   handleClick = (item,e) => {
     console.log("row clicked" + item.name);
     this.setState({selectedItem:item, openDetail: true, newItem:item});
   }
-  
-  updateItems = () => {
-    const items = Object.assign([], this.state.items);
-    const _item = this.findItemByName(this.state.selectedItem);
-    const index = items.indexOf(_item);
-    console.log(index);
-    items[index] = Object.assign({},this.state.selectedItem);
-    this.setState({items : items});
-  }
 
   closeDetail = (item,e) => {
-    this.setState({openDetail: false});  
-  }
-
-  submitDetail = (item,e) => {
-    this.updateItems();
     this.setState({openDetail: false});  
   }
 
@@ -99,12 +81,13 @@ class App extends Component {
     console.log(this.state.selectedItem.qty);
   }
 
-  findItemByName = (item) => {
-    return this.state.items.find(_item => {
-      return _item.name === item.name
-    })
+  findItemIndexByName = (item) => {
+    for (let i = 0; i < this.state.items.length; i++) {
+      if (this.state.items[i].name === item.name) 
+        return i;
+    }
+    return -1;
   }
-
 
   render() {
     const items = this.state.items.filter((item, index) => {
@@ -123,26 +106,42 @@ class App extends Component {
         > {item.name}</Item>)
     }) 
 
+    const similarItems = this.state.items.filter((item, index) => {
+      if (item.name.toUpperCase().includes("APP"))
+        return true;
+      else
+        return false;
+    }).map((item,index) => {
+      return (
+        <Item
+          key={item.name}
+          qty={item.qty}
+          unit={item.unit}
+          deleteEvent={this.deleteItem.bind(this, item)}
+          rowClickEvent={this.handleClick.bind(this, item)}
+        > {item.name}</Item>)
+    })     
+
     return (
       <div>
         <Sidebar.Pushable as={Segment} >
           <Sidebar as={Menu}  width="wide" animation='push' direction='top' visible={true} inverted>
-          <Search aligned="right" fluid={true} style={{padding:10}} size="small"
+          <Search showNoResults={false} fluid={true} style={{margin:10}} size="small"
               onSearchChange={this.changeSearchText}
               {...this.props}
             />
+            <Button primary style={{position: 'absolute', right: 0, margin:10}}>Send</Button>
           </Sidebar>
           <Sidebar.Pusher>
             <Segment basic>
-              <Table sortable={true} striped={true} style={{marginTop: 50, width:"100%"}}>
-                <Table.Header>
+              <Table selectable={true} unstackable={true}  basic="very" striped={false} style={{marginTop: 10, width:"100%"}}>
+                {/* <Table.Header>
                   <Table.Row>
                     <Table.HeaderCell>Item</Table.HeaderCell>
                     <Table.HeaderCell style={{width: '10%'}}>Qty</Table.HeaderCell>
                     <Table.HeaderCell style={{width: '10%'}}>Unit</Table.HeaderCell>
-                    {/* <Table.HeaderCell style={{width: '10%'}}>Actions</Table.HeaderCell> */}
                   </Table.Row>
-                </Table.Header>
+                </Table.Header> */}
                 <Table.Body >
                   {items}
                 </Table.Body>
@@ -150,21 +149,35 @@ class App extends Component {
             </Segment>
           </Sidebar.Pusher>
         </Sidebar.Pushable>
-        <Modal dimmer='inverted' open={this.state.openDetail} onClose={this.closeDetail}>
+        <Modal size="tiny"   dimmer={true} open={this.state.openDetail} onClose={this.closeDetail} closeIcon={false}>
           <Modal.Header>{this.state.selectedItem.name}</Modal.Header>
           <Modal.Content >
-            <Input hint="qty" value={this.state.selectedItem.qty} onChange={this.setQty}/>    
-            <p/>
-            <Button style={{margin:4, width:80}} onClick={this.setUnit}>BAGS</Button>      
-            <Button style={{margin:4, width:80}} onClick={this.setUnit}>BIN</Button>      
-            <Button style={{margin:4, width:80}} onClick={this.setUnit}>BOXES</Button>
-            <Button style={{margin:4, width:80}} onClick={this.setUnit}>SHELF</Button>      
-            <Button style={{margin:4, width:80}} onClick={this.setUnit}>TRAYS</Button>      
-            <p/>
+            <Input  maxLength="2" hint="qty" style={{width:50}} value={this.state.selectedItem.qty} onChange={this.setQty}/>    
+            <Button style={{margin:4}} onClick={this.setUnit}>¼</Button>      
+            <Button style={{margin:4}} onClick={this.setUnit}>½</Button>      
+            <Button style={{margin:4}} onClick={this.setUnit}>¾</Button>
+            <p>
+              <Button style={{margin:4, width:80}} onClick={this.setUnit}>bags</Button>      
+              <Button style={{margin:4, width:80}} onClick={this.setUnit}>bin</Button>      
+              <Button style={{margin:4, width:80}} onClick={this.setUnit}>boxes</Button>
+              <Button style={{margin:4, width:80}} onClick={this.setUnit}>shelf</Button>      
+              <Button style={{margin:4, width:80}} onClick={this.setUnit}>trays</Button>      
+            </p>
+            <Table selectable={true} unstackable={true}  basic="very" striped={false} style={{marginTop: 10, width:"100%"}}>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell colSpan='3'>SIMILAR ITEMS</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>            
+            <Table.Body >
+                  {similarItems}
+                </Table.Body>
+              </Table>
           </Modal.Content>
           <Modal.Actions>
-            <Button color='black' onClick={this.closeDetail}>CANCEL</Button>
-            <Button positive icon='checkmark' labelPosition='right' content="OK" onClick={this.submitDetail} />
+
+            {/* <Button color='black' onClick={this.closeDetail}>CANCEL</Button>
+            <Button positive icon='checkmark' labelPosition='right' content="OK" onClick={this.submitDetail} /> */}
           </Modal.Actions>
         </Modal>
       </div>
