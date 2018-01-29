@@ -50,6 +50,7 @@ class App extends Component {
   clearSearchText = (e) => {
     this.setState({searchText: ""});
   }
+  handleRef = component => (this.ref = component);
 
   openDetail = (e) => {
     this.setState({openDetail: true, detailTitle: e.target.value});
@@ -62,12 +63,26 @@ class App extends Component {
     _item.unit = e.children;
     _item.qty = this.state.selectedItem.qty;
     items[index] = Object.assign({},_item);
-    this.setState({items:items, selectedItem:_item, openDetail:false});
+    this.setState({items:items, selectedItem:_item, openDetail:true});
   }
  
+
+  onBlur = (item,e) => {
+    console.log("onBlur");
+  }
+
+  handleEnterKeyPress = (item,e) => {
+    console.log("handleEnterKeyPress");
+  }
+
+
+
+  
   handleClick = (item,e) => {
     console.log("row clicked" + item.name);
-    this.setState({selectedItem:item, openDetail: true, newItem:item});
+    // Without setTimeout the modal has not rendered when focus() is called. 
+    // setTimeouts() are executed last in the function all stack so 0 delay works!
+    this.setState({selectedItem:item, openDetail: true, newItem:item}, () => setTimeout(() => this.ref.focus(),0));
   }
 
   closeDetail = (item,e) => {
@@ -75,6 +90,7 @@ class App extends Component {
   }
 
   setQty = (item,e) => {
+    console.log(JSON.stringify(this.state.selectedItem));
     const _newItem = Object.assign({}, this.state.selectedItem);
      _newItem.qty = e.value; 
     this.setState({selectedItem: _newItem});
@@ -149,20 +165,21 @@ class App extends Component {
             </Segment>
           </Sidebar.Pusher>
         </Sidebar.Pushable>
-        <Modal size="tiny"   dimmer={true} open={this.state.openDetail} onClose={this.closeDetail} closeIcon={false}>
+        <Modal size="tiny"   dimmer={true} open={this.state.openDetail} onClose={this.closeDetail} closeIcon>
           <Modal.Header>{this.state.selectedItem.name}</Modal.Header>
           <Modal.Content >
-            <Input  maxLength="2" hint="qty" style={{width:50}} value={this.state.selectedItem.qty} onChange={this.setQty}/>    
-            <Button style={{margin:4}} onClick={this.setUnit}>¼</Button>      
-            <Button style={{margin:4}} onClick={this.setUnit}>½</Button>      
-            <Button style={{margin:4}} onClick={this.setUnit}>¾</Button>
-            <p>
-              <Button style={{margin:4, width:80}} onClick={this.setUnit}>bags</Button>      
-              <Button style={{margin:4, width:80}} onClick={this.setUnit}>bin</Button>      
-              <Button style={{margin:4, width:80}} onClick={this.setUnit}>boxes</Button>
-              <Button style={{margin:4, width:80}} onClick={this.setUnit}>shelf</Button>      
-              <Button style={{margin:4, width:80}} onClick={this.setUnit}>trays</Button>      
-            </p>
+            <Input focus maxLength="2" hint="qty" ref={this.handleRef} style={{width:50}} value={this.state.selectedItem.qty} onChange={this.setQty} onBlur={this.onBlur} onKeyPress={this.handleEnterKeyPress} />    
+            <Button basic style={{margin:4}} onClick={this.setUnit}>¼</Button>      
+            <Button basic style={{margin:4}} onClick={this.setUnit}>½</Button>      
+            <Button basic style={{margin:4}} onClick={this.setUnit}>¾</Button>
+            <p/>
+            <Button.Group widths="5">
+              <Button   onClick={this.setUnit}>bags</Button>      
+              <Button   onClick={this.setUnit}>bin</Button>      
+              <Button   onClick={this.setUnit}>boxes</Button>
+              <Button   onClick={this.setUnit}>shelf</Button>      
+              <Button  onClick={this.setUnit}>trays</Button>      
+              </Button.Group>
             <Table selectable={true} unstackable={true}  basic="very" striped={false} style={{marginTop: 10, width:"100%"}}>
             <Table.Header>
               <Table.Row>
