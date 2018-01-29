@@ -53,7 +53,11 @@ class App extends Component {
   handleRef = component => (this.ref = component);
 
   openDetail = (e) => {
-    this.setState({openDetail: true, detailTitle: e.target.value});
+    this.setState({openDetail: true, detailTitle: e.target.value}, () => {
+      if(this.inputWrap && this.inputWrap.firstChild) {
+        this.inputText.focus();
+      }   
+    });
   }
 
   setUnit = (item,e) => {
@@ -61,23 +65,11 @@ class App extends Component {
     const index = this.findItemIndexByName(this.state.selectedItem);
     const _item = items[index];
     _item.unit = e.children;
-    _item.qty = this.state.selectedItem.qty;
+//    _item.qty = this.state.selectedItem.qty;
     items[index] = Object.assign({},_item);
     this.setState({items:items, selectedItem:_item, openDetail:true});
   }
  
-
-  onBlur = (item,e) => {
-    console.log("onBlur");
-  }
-
-  handleEnterKeyPress = (item,e) => {
-    console.log("handleEnterKeyPress");
-  }
-
-
-
-  
   handleClick = (item,e) => {
     console.log("row clicked" + item.name);
     // Without setTimeout the modal has not rendered when focus() is called. 
@@ -90,11 +82,12 @@ class App extends Component {
   }
 
   setQty = (item,e) => {
-    console.log(JSON.stringify(this.state.selectedItem));
-    const _newItem = Object.assign({}, this.state.selectedItem);
-     _newItem.qty = e.value; 
-    this.setState({selectedItem: _newItem});
-    console.log(this.state.selectedItem.qty);
+    const items = Object.assign([], this.state.items);
+    const index = this.findItemIndexByName(this.state.selectedItem);
+    const _item = items[index];
+    _item.qty = e.value;
+    items[index] = Object.assign({},_item);
+    this.setState({items:items, selectedItem:_item, openDetail:true});
   }
 
   findItemIndexByName = (item) => {
@@ -168,7 +161,7 @@ class App extends Component {
         <Modal size="tiny"   dimmer={true} open={this.state.openDetail} onClose={this.closeDetail} closeIcon>
           <Modal.Header>{this.state.selectedItem.name}</Modal.Header>
           <Modal.Content >
-            <Input focus maxLength="2" hint="qty" ref={this.handleRef} style={{width:50}} value={this.state.selectedItem.qty} onChange={this.setQty} onBlur={this.onBlur} onKeyPress={this.handleEnterKeyPress} />    
+            <Input focus maxLength="2" hint="qty" ref={this.handleRef} style={{width:50}} value={this.state.selectedItem.qty} onChange={this.setQty}/>    
             <Button basic style={{margin:4}} onClick={this.setUnit}>¼</Button>      
             <Button basic style={{margin:4}} onClick={this.setUnit}>½</Button>      
             <Button basic style={{margin:4}} onClick={this.setUnit}>¾</Button>
