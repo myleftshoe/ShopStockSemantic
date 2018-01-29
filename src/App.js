@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Sidebar, Segment, Button, Menu, Image, Icon, Header, Modal, Input, Search, Label, Table } from 'semantic-ui-react'
+import { Sidebar, Segment, Button, Menu, Image, Icon, Header, Modal, Input, Search, Label, Table, Container, Grid } from 'semantic-ui-react'
 
 
 import './App.css';
@@ -82,14 +82,38 @@ class App extends Component {
   }
 
   setQty = (item,e) => {
+    var regexp = /[¼½¾]/gi;
+    var validInput=false;
+    if (e.value.length === 0)
+      validInput = true;
+    else if ((e.value.length === 1) && ("0123456789¼½¾".includes(e.value)))
+        validInput = true;
+    else if (e.value.length === 2) {
+      if (("0¼½¾".includes(e.value.charAt(0)) === false) && ("0123456789¼½¾".includes(e.value.charAt(1)) === true))
+        validInput = true;
+    }
+    if (validInput) {
+        const items = Object.assign([], this.state.items);
+        const index = this.findItemIndexByName(this.state.selectedItem);
+        const _item = items[index];
+        _item.qty = e.value;
+        items[index] = Object.assign({},_item);
+        this.setState({items:items, selectedItem:_item, openDetail:true}, () => setTimeout(() => this.ref.focus(),0));
+    }
+  }
+
+  clearQty = (e) => {
+    console.log("fsdfsd:" + e.value);
     const items = Object.assign([], this.state.items);
     const index = this.findItemIndexByName(this.state.selectedItem);
     const _item = items[index];
-    _item.qty = e.value;
+    _item.qty = "";
+    _item.unit = ""
     items[index] = Object.assign({},_item);
-    this.setState({items:items, selectedItem:_item, openDetail:true});
+    this.setState({items:items, selectedItem:_item, openDetail:true}, () => setTimeout(() => this.ref.focus(),0));
   }
 
+  
   findItemIndexByName = (item) => {
     for (let i = 0; i < this.state.items.length; i++) {
       if (this.state.items[i].name === item.name) 
@@ -131,6 +155,22 @@ class App extends Component {
         > {item.name}</Item>)
     })     
 
+    const doneItems = this.state.items.filter((item, index) => {
+      if (item.qty || item.unit)
+        return true;
+      else
+        return false;
+    }).map((item,index) => {
+      return (
+        <Item
+          key={item.name}
+          qty={item.qty}
+          unit={item.unit}
+          deleteEvent={this.deleteItem.bind(this, item)}
+          rowClickEvent={this.handleClick.bind(this, item)}
+        > {item.name}</Item>)
+    })   
+
     return (
       <div>
         <Sidebar.Pushable as={Segment} >
@@ -161,11 +201,21 @@ class App extends Component {
         <Modal size="tiny"   dimmer={true} open={this.state.openDetail} onClose={this.closeDetail} closeIcon>
           <Modal.Header>{this.state.selectedItem.name}</Modal.Header>
           <Modal.Content >
-            <Input focus maxLength="2" hint="qty" ref={this.handleRef} style={{width:50}} value={this.state.selectedItem.qty} onChange={this.setQty}/>    
-            <Button basic style={{margin:4}} onClick={this.setUnit}>¼</Button>      
-            <Button basic style={{margin:4}} onClick={this.setUnit}>½</Button>      
-            <Button basic style={{margin:4}} onClick={this.setUnit}>¾</Button>
-            <p/>
+          <Grid  verticalAlign="middle" stackable={false} >
+            <Grid.Row>
+            <Grid.Column width={7} textAlign="left" >
+              <Input  size="big" fluid focus action={{ size:'big', color: 'teal', icon: 'cancel', onClick: this.clearQty }}  maxLength="2" hint="qty" ref={this.handleRef}  value={this.state.selectedItem.qty} onChange={this.setQty}/>    
+            </Grid.Column>
+            <Grid.Column width={9} textAlign="right">
+            <Button.Group basic>
+              <Button basic value={this.state.selectedItem.qty + '¼'} onClick={this.setQty}>¼</Button>      
+              <Button basic value={this.state.selectedItem.qty + '½'} onClick={this.setQty}>½</Button>      
+              <Button basic value={this.state.selectedItem.qty + '¾'} onClick={this.setQty}>¾</Button>
+            </Button.Group>
+            </Grid.Column>
+            </Grid.Row>
+          </Grid>
+          <p/>
             <Button.Group widths="5">
               <Button   onClick={this.setUnit}>bags</Button>      
               <Button   onClick={this.setUnit}>bin</Button>      
