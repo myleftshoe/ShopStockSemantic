@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Sidebar, Segment, Button, Menu, Image, Icon, Header, Modal, Input, Search, Label, Table, Divider, Container, Grid, List } from 'semantic-ui-react';
+import {Button, Sidebar, Segment,  Menu, Image, Icon, Header, Modal, Input, Search, Label, Table, Divider, Container, Grid, List } from 'semantic-ui-react';
 
-
+import { Card, CardHeader, CardTitle} from 'react-mdc-web/lib';
 import './App.css';
 
 import Item from "./components/item";
@@ -141,6 +141,7 @@ sendClicked = (e) => {
     }
     return -1;
   }
+  
 
   render() {
     const items = this.state.items.filter((item, index) => {
@@ -203,7 +204,7 @@ sendClicked = (e) => {
       <div>
         {/* <Sidebar.Pushable as={Segment} >
           <Sidebar as={Menu}  width="wide" animation='push' direction='top' visible={true} inverted> */}
-          <Grid style={{backgroundColor:'teal', paddingTop:12, paddingLeft:16, paddingRight:16}}  > 
+          <Grid style={{backgroundColor:'black', paddingTop:12, paddingLeft:16, paddingRight:16}}  > 
           <Grid.Column verticalAlign="bottom" className="left floated" >
                 <Search  showNoResults={false} fluid={true} size="small"
                 onSearchChange={this.changeSearchText}
@@ -211,24 +212,19 @@ sendClicked = (e) => {
               />
           </Grid.Column>
           <Grid.Column>
-              <Button backgroundColor="teal" toggle active={true} icon="compress" className="right floated "  onClick={this.sendClicked}>All</Button>
+              <Button style={{backgroundColor:"white"}}  circular icon="exchange" className="right floated " onClick={this.sendClicked}></Button>
               </Grid.Column>
             {/* <Divider /> */}
           </Grid>
-          <Button primary size="massive" circular icon="settings" style={{position: 'absolute', bottom:24, right:24 }}/>
+          {
+          this.state.openDoneModal
+            ? <Button primary  size="massive" circular icon="send" style={{position: 'fixed', bottom:32, right:32, display:'block' }}/>
+            : null
+          } 
           {/* </Sidebar>
           <Sidebar.Pusher> */}
-              <Table unstackable selectable divided >
-                {/* <Table.Header>
-                  <Table.Row>
-                    <Table.HeaderCell>Item</Table.HeaderCell>
-                    <Table.HeaderCell style={{width: '10%'}}>Qty</Table.HeaderCell>
-                    <Table.HeaderCell style={{width: '10%'}}>Unit</Table.HeaderCell>
-                  </Table.Row>
-                </Table.Header> */}
-                <Table.Body >
+              <Table unstackable selectable striped width="16">
                   {items}
-                </Table.Body>
               </Table  >
 
           {/* </Sidebar.Pusher>
@@ -239,7 +235,7 @@ sendClicked = (e) => {
           <Grid  verticalAlign="middle" stackable={false} >
             <Grid.Row>
             <Grid.Column width={7} textAlign="left" >
-              <Input  size="big" fluid focus action={{ size:'big', color: 'teal', icon: 'cancel', onClick: this.clearQty }}  maxLength="2" hint="qty" ref={this.handleRef}  value={this.state.selectedItem.qty} onChange={this.setQty}/>    
+              <Input  size="big" style={{visible:"hidden"}} fluid focus action={{ size:'big', color: 'teal', icon: 'cancel', onClick: this.clearQty }}  maxLength="2" hint="qty" ref={this.handleRef}  value={this.state.selectedItem.qty} onChange={this.setQty}/>    
             </Grid.Column>
             <Grid.Column width={9} textAlign="right">
             <Button.Group basic>
