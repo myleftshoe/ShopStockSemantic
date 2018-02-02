@@ -201,36 +201,39 @@ sendClicked = (e) => {
           </Table.Body>
         </Table>
 
-        <TransitionablePortal open={this.state.openDetail} transition={{animation:'drop', duration:500}}  closeOnDocumentClick={true} >  
-          <Segment style={{ left: '0%', position: 'fixed', top: '61px', zIndex: 1000, width:"auto", height:"auto"  }}>
+        <TransitionablePortal open={this.state.openDetail} transition={{animation:'slide down', duration:200}}  closeOnDocumentClick={true} >  
+          <Segment inverted style={{ left: '0%', position: 'fixed', bottom: '0px', zIndex: 1000, width:"100%", height:"auto", backgroundcolor:"#FF2020" }} textAlign="center">
             <Header>{this.state.selectedItem.name}</Header>
               {/* {similarItems} */}
-            <Segment>
-              <Input textAlign="center" type="number" placeholder= "--" maxLength="4"  transparent inverted name="number" style={{ fontSize: 32, caretColor: "transparent", color:"black", width:80}} size="massive"   
+            <Menu secondary fluid>
+              <Menu.Item textAlign="center">
+              <Input  type="number" placeholder= "--" maxLength="4"  transparent inverted name="number" style={{ fontSize: 24, caretColor: "black", color:"black", width:80}} size="massive"   
                     ref={this.handleRef}  value={this.state.selectedItem.qty} onChange={this.setQty}
             //        label={<Button basic icon='delete' onClick={this.clearQty.bind(this)}/>}
                   />        
-            </Segment>
-            <Segment>
-              <Grid centered columns={3}>
-                <Grid.Column textAlign='center'>
+              </Menu.Item>
+              {/* <Menu.Item >
+            <Dropdown  options={options} selection text={this.state.selectedItem.unit}  />
+            </Menu.Item> */}
+              </Menu>
+              {/* <Grid centered columns={3} >
+                <Grid.Column textAlign='center' style={{margin:-5}}>
                   <Button onClick={this.setUnit.bind(this)}>bin</Button>      
                 </Grid.Column>
-                <Grid.Column textAlign='center'>
+                <Grid.Column textAlign='center' style={{margin:-5}}>
                   <Button onClick={this.setUnit}>shelf</Button>
                 </Grid.Column>
-                <Grid.Column textAlign='center'>
+                <Grid.Column textAlign='center' style={{margin:-5}}>
                   <Button onClick={this.setUnit}>bags</Button>      
                 </Grid.Column>
-                <Grid.Column textAlign='center'>
+                <Grid.Column textAlign='center' style={{margin:-5}}>
                   <Button onClick={this.setUnit}>boxes</Button>
                 </Grid.Column>
-                <Grid.Column textAlign='center'>
+                <Grid.Column textAlign='center' style={{margin:-5}}>
                   <Button onClick={this.setUnit}>trays</Button>   
                 </Grid.Column>
-              </Grid> 
-            </Segment>
-          </Segment>
+              </Grid>  */}
+              </Segment>
         </TransitionablePortal>               
       </div>
     );
