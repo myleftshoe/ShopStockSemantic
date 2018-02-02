@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
-import {Button, Sidebar, Segment,  Menu, Image, Icon, Header, Modal, Input, Search, Label, Table, Divider, Container, Grid, List } from 'semantic-ui-react';
+import {Button, Dropdown,List, Icon, Modal, Input, Search, Table, Grid, Container, Popup, Header, Menu, Segment, TransitionablePortal} from 'semantic-ui-react';
 
-import { Card, CardHeader, CardTitle} from 'react-mdc-web/lib';
 import './App.css';
 
 import Item from "./components/item";
 //import Detail from "./components/detail";
 
 const FETCHURL = "https://api.jsonbin.io/b/5a6a9226814505706ad40ea9";
+const options = [
+  { key: 'BAGS', text: 'BAGS', value: 'BAGS' },
+  { key: 'BOXES', text: 'BOXES', value: 'BOXES' },
+  { key: 'TRAYS', text: 'TRAYS', value: 'TRAYS' },
+  { key: 'BIN', text: 'BIN', value: 'BIN' },
+  { key: 'SHELF', text: 'SHELF', value: 'SHELF' },  
+]
 
 class App extends Component {
 
@@ -19,8 +25,6 @@ class App extends Component {
     openDoneModal: false,
     donModalTitle: 'Placeholder Item',
     selectedItem:{name:"", qty:0, unit:""},
-    newItem:{name:"", qty:0, unit:""}
-
   }
 
   componentDidMount() {
@@ -50,6 +54,8 @@ class App extends Component {
   }
 
   clearSearchText = (e) => {
+    console.log((this.input1));
+    this.input1.setValue("");
     this.setState({searchText: ""});
   }
   handleRef = component => (this.ref = component);
@@ -58,7 +64,8 @@ class App extends Component {
     const items = Object.assign([], this.state.items);
     const index = this.findItemIndexByName(this.state.selectedItem);
     const _item = items[index];
-    _item.unit = e.children;
+//    _item.unit = e.value;
+     _item.unit = e.children;
 //    _item.qty = this.state.selectedItem.qty;
     items[index] = Object.assign({},_item);
     this.setState({items:items, selectedItem:_item, openDetail:true});
@@ -68,7 +75,7 @@ class App extends Component {
     console.log("row clicked" + item.name);
     // Without setTimeout the modal has not rendered when focus() is called. 
     // setTimeouts() are executed last in the function all stack so 0 delay works!
-    this.setState({selectedItem:item, openDetail: true, newItem:item}, () => setTimeout(() => this.ref.focus(),0));
+    this.setState({selectedItem:item, openDetail: true}, () => setTimeout(() => this.ref.focus(),0));
   }
 
 sendClicked = (e) => {
@@ -102,28 +109,17 @@ sendClicked = (e) => {
 
 
   setQty = (item,e) => {
-    var regexp = /[¼½¾]/gi;
-    var validInput=false;
-    if (e.value.length === 0)
-      validInput = true;
-    else if ((e.value.length === 1) && ("0123456789¼½¾".includes(e.value)))
-        validInput = true;
-    else if (e.value.length === 2) {
-      if (("0¼½¾".includes(e.value.charAt(0)) === false) && ("0123456789¼½¾".includes(e.value.charAt(1)) === true))
-        validInput = true;
-    }
-    if (validInput) {
-        const items = Object.assign([], this.state.items);
-        const index = this.findItemIndexByName(this.state.selectedItem);
-        const _item = items[index];
-        _item.qty = e.value;
-        items[index] = Object.assign({},_item);
-        this.setState({items:items, selectedItem:_item, openDetail:true}, () => setTimeout(() => this.ref.focus(),0));
-    }
+    if (e.value.length > 2)
+      return;
+    const items = Object.assign([], this.state.items);
+    const index = this.findItemIndexByName(this.state.selectedItem);
+    const _item = items[index];
+    _item.qty = e.value;
+    items[index] = Object.assign({},_item);
+    this.setState({items:items, selectedItem:_item, openDetail:true}, () => setTimeout(() => this.ref.focus(),0));
   }
 
   clearQty = (e) => {
-    console.log("fsdfsd:" + e.value);
     const items = Object.assign([], this.state.items);
     const index = this.findItemIndexByName(this.state.selectedItem);
     const _item = items[index];
@@ -141,6 +137,7 @@ sendClicked = (e) => {
     }
     return -1;
   }
+  
   
 
   render() {
@@ -163,6 +160,7 @@ sendClicked = (e) => {
           key={item.name}
           qty={item.qty}
           unit={item.unit}
+          qtyunit={item.qty + " " + item.qty}
           deleteEvent={this.deleteItem.bind(this, item)}
           rowClickEvent={this.handleClick.bind(this, item)}
         > {item.name}</Item>)
@@ -179,138 +177,61 @@ sendClicked = (e) => {
           key={item.name}
           qty={item.qty}
           unit={item.unit}
+          qtyunit={item.qty + " " + item.qty}
           deleteEvent={this.deleteItem.bind(this, item)}
           rowClickEvent={this.handleClick.bind(this, item)}
         > {item.name}</Item>)
     })     
-/*
-    const doneItems = this.state.items.filter((item, index) => {
-      if (item.qty || item.unit)
-        return true;
-      else
-        return false;
-    }).map((item,index) => {
-      return (
-        <Item
-          key={item.name}
-          qty={item.qty}
-          unit={item.unit}
-          deleteEvent={this.deleteItem.bind(this, item)}
-          rowClickEvent={this.handleClick.bind(this, item)}
-        > {item.name}</Item>)
-    })   
-*/
     return (
       <div>
-        {/* <Sidebar.Pushable as={Segment} >
-          <Sidebar as={Menu}  width="wide" animation='push' direction='top' visible={true} inverted> */}
-          <Grid style={{backgroundColor:'black', paddingTop:12, paddingLeft:16, paddingRight:16}}  > 
-          <Grid.Column verticalAlign="bottom" className="left floated" >
-                <Search  showNoResults={false} fluid={true} size="small"
-                onSearchChange={this.changeSearchText}
-                {...this.props}
-              />
-          </Grid.Column>
-          <Grid.Column>
-              <Button style={{backgroundColor:"white"}}  circular icon="exchange" className="right floated " onClick={this.sendClicked}></Button>
-              </Grid.Column>
-            {/* <Divider /> */}
-          </Grid>
-          {
-          this.state.openDoneModal
-            ? <Button primary  size="massive" circular icon="send" style={{position: 'fixed', bottom:32, right:32, display:'block' }}/>
-            : null
-          } 
-          {/* </Sidebar>
-          <Sidebar.Pusher> */}
-              <Table unstackable selectable striped width="16">
-                  {items}
-              </Table  >
+        <Menu className="ui fixed" inverted>
+          <Menu.Item>
+            <Search showNoResults={false} fluid={true} size="small" ref={input1 => this.input1 = input1} onSearchChange={this.changeSearchText} {...this.props}
+              icon={<Icon name='delete'  circular link onClick={this.clearSearchText.bind(this)}/>}
+            />
+          </Menu.Item>
+          <Menu.Item position="right">
+            <Icon link color="white" name="send" circular onClick={this.clearSearchText}/>
+          </Menu.Item>
+        </Menu>
+        <Button secondary  size="massive" circular icon="compress" style={{position: 'fixed', bottom:32, right:32, display:'block'  }} onClick={this.sendClicked}/>          
+        <Table unstackable selectable striped width="16">
+          <Table.Body>
+            {items}
+          </Table.Body>
+        </Table>
 
-          {/* </Sidebar.Pusher>
-        </Sidebar.Pushable> */}
-        <Modal size="tiny"   dimmer={true} open={this.state.openDetail} onClose={this.closeDetail} closeIcon>
-          <Modal.Header>{this.state.selectedItem.name}</Modal.Header>
-          <Modal.Content >
-          <Grid  verticalAlign="middle" stackable={false} >
-            <Grid.Row>
-            <Grid.Column width={7} textAlign="left" >
-              <Input  size="big" style={{visible:"hidden"}} fluid focus action={{ size:'big', color: 'teal', icon: 'cancel', onClick: this.clearQty }}  maxLength="2" hint="qty" ref={this.handleRef}  value={this.state.selectedItem.qty} onChange={this.setQty}/>    
-            </Grid.Column>
-            <Grid.Column width={9} textAlign="right">
-            <Button.Group basic>
-              <Button basic value={this.state.selectedItem.qty + '¼'} onClick={this.setQty}>¼</Button>      
-              <Button basic value={this.state.selectedItem.qty + '½'} onClick={this.setQty}>½</Button>      
-              <Button basic value={this.state.selectedItem.qty + '¾'} onClick={this.setQty}>¾</Button>
-            </Button.Group>
-            </Grid.Column>
-            </Grid.Row>
-          </Grid>
-          <p/>
-            <Button.Group widths="5">
-              <Button   onClick={this.setUnit}>bags</Button>      
-              <Button   onClick={this.setUnit}>bin</Button>      
-              <Button   onClick={this.setUnit}>boxes</Button>
-              <Button   onClick={this.setUnit}>shelf</Button>      
-              <Button  onClick={this.setUnit}>trays</Button>      
-              </Button.Group>
-            <Table selectable={true} unstackable={true}  basic="very" striped={false} style={{marginTop: 10, width:"100%"}}>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell colSpan='3'>SIMILAR ITEMS</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>            
-            <Table.Body >
-                  {similarItems}
-                </Table.Body>
-              </Table>
-          </Modal.Content>
-          <Modal.Actions>
-
-            {/* <Button color='black' onClick={this.closeDetail}>CANCEL</Button>
-            <Button positive icon='checkmark' labelPosition='right' content="OK" onClick={this.submitDetail} /> */}
-          </Modal.Actions>
-        </Modal>
-        {/* <Modal size="tiny"   dimmer={true} open={this.state.openDoneModal} onClose={this.closeDoneModal} closeIcon>
-          <Modal.Header>{this.state.selectedItem.name}</Modal.Header>
-          <Modal.Content >
-          <Grid  verticalAlign="middle" stackable={false} >
-            <Grid.Row>
-            <Grid.Column width={7} textAlign="left" >
-              <Input  size="big" fluid focus action={{ size:'big', color: 'teal', icon: 'cancel', onClick: this.clearQty }}  maxLength="2" hint="qty" ref={this.handleRef}  value={this.state.selectedItem.qty} onChange={this.setQty}/>    
-            </Grid.Column>
-            <Grid.Column width={9} textAlign="right">
-            <Button.Group basic>
-              <Button basic value={this.state.selectedItem.qty + '¼'} onClick={this.setQty}>¼</Button>      
-              <Button basic value={this.state.selectedItem.qty + '½'} onClick={this.setQty}>½</Button>      
-              <Button basic value={this.state.selectedItem.qty + '¾'} onClick={this.setQty}>¾</Button>
-            </Button.Group>
-            </Grid.Column>
-            </Grid.Row>
-          </Grid>
-          <p/>
-            <Button.Group widths="5">
-              <Button   onClick={this.setUnit}>bags</Button>      
-              <Button   onClick={this.setUnit}>bin</Button>      
-              <Button   onClick={this.setUnit}>boxes</Button>
-              <Button   onClick={this.setUnit}>shelf</Button>      
-              <Button  onClick={this.setUnit}>trays</Button>      
-              </Button.Group>
-            <Table selectable={true} unstackable={true}  basic="very" striped={false} style={{marginTop: 10, width:"100%"}}>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell colSpan='3'>SIMILAR ITEMS</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>            
-            <Table.Body >
-                  {doneItems}
-                </Table.Body>
-              </Table>
-          </Modal.Content>
-          <Modal.Actions>
-          </Modal.Actions>
-        </Modal> */}
-
+        <TransitionablePortal open={this.state.openDetail} transition={{animation:'drop', duration:500}}  closeOnDocumentClick={true} >  
+          <Segment style={{ left: '0%', position: 'fixed', top: '61px', zIndex: 1000, width:"auto", height:"auto"  }}>
+            <Header>{this.state.selectedItem.name}</Header>
+              {/* {similarItems} */}
+            <Segment>
+              <Input textAlign="center" type="number" placeholder= "--" maxLength="4"  transparent inverted name="number" style={{ fontSize: 32, caretColor: "transparent", color:"black", width:80}} size="massive"   
+                    ref={this.handleRef}  value={this.state.selectedItem.qty} onChange={this.setQty}
+            //        label={<Button basic icon='delete' onClick={this.clearQty.bind(this)}/>}
+                  />        
+            </Segment>
+            <Segment>
+              <Grid centered columns={3}>
+                <Grid.Column textAlign='center'>
+                  <Button onClick={this.setUnit.bind(this)}>bin</Button>      
+                </Grid.Column>
+                <Grid.Column textAlign='center'>
+                  <Button onClick={this.setUnit}>shelf</Button>
+                </Grid.Column>
+                <Grid.Column textAlign='center'>
+                  <Button onClick={this.setUnit}>bags</Button>      
+                </Grid.Column>
+                <Grid.Column textAlign='center'>
+                  <Button onClick={this.setUnit}>boxes</Button>
+                </Grid.Column>
+                <Grid.Column textAlign='center'>
+                  <Button onClick={this.setUnit}>trays</Button>   
+                </Grid.Column>
+              </Grid> 
+            </Segment>
+          </Segment>
+        </TransitionablePortal>               
       </div>
     );
   }
