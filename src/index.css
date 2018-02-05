@@ -3,3 +3,18 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+/* 
+.hover-item {
+	background-color: #FFF;
+}
+
+.hover-item:hover {
+	background-color: inherit;
+}
+
+ui.button.create-new-menu-btn {
+  border-radius: 0;
+  background-color: red;
+}
+*/
