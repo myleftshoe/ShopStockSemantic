@@ -24,14 +24,16 @@ class App extends Component {
     searchText: "",
     items: [{name:"dummy", qty:0, unit:"", tags:""}],
     openKeypad: false,
-    openDoneModal: false,
+    done: false,
     selectedItem:{name:"", qty:0, unit:"", tags:""},
     selectedLetter: "",
+    selectedTag: "",
     contentTopMargin:'61px',
     showRelatedItems:false,
     openSearch:false,
     openNavigator:true,
-    openAZ:false
+    openAZ:false,
+    startingLetters: []
   }
 
   componentDidMount() {
@@ -83,6 +85,12 @@ class App extends Component {
     }
   }
 
+  
+  toggleDone = (e) => {
+    this.setState({done: !this.state.done});//, () => setTimeout(() => this.ref.focus(),0));
+  }
+
+  
   sendClicked = (e) => {
     this.setState({openDoneModal: !this.state.openDoneModal});//, () => setTimeout(() => this.ref.focus(),0));
   }
@@ -126,10 +134,25 @@ class App extends Component {
     this.setState({openAZ: false});
   }
 
+  onOpenAZ = (e) => {
+    let startLetters=[];
+    this.state.items.forEach((item) => {
+      startLetters.push(item.name.charAt(0).toUpperCase());
+    });
+    let distinctLetters = Array.from(new Set(startLetters));
+    console.log(distinctLetters);
+    this.setState({startingLetters:distinctLetters});
+  }
+
   selectLetter = (item, e) => {
     console.log(e.children);
-    this.setState({selectedLetter:e.children});
-    this.closeAZ();
+    if (this.state.selectedLetter === e.children) {
+      this.deselectLetter();
+      this.closeAZ();
+    }
+    else
+      this.setState({selectedLetter:e.children});
+//    this.closeAZ();
   }
 
   deselectLetter = () => {
@@ -137,6 +160,12 @@ class App extends Component {
 //    this.closeAZ();
   }
 
+  handleTagClick = (e, p) => {
+    e.stopPropagation();
+    console.log(p.children);
+    this.setState({selectedTag: p.children});
+    this.closeNavigator();    
+  }
 
   setQty = (item,e) => {
     console.log(e.children);
@@ -184,30 +213,32 @@ class App extends Component {
 
   render() {
     const items = this.state.items.filter((item, index) => {
+      console.log(item.tags);
       if (this.state.selectedLetter.length > 0) {
-        if (item.name.charAt(0).toUpperCase() === this.state.selectedLetter.toLocaleUpperCase() )
+        if (item.name.charAt(0).toUpperCase() === this.state.selectedLetter.toUpperCase())
           return true;
         else
           return false;
       }
-      if (this.state.showRelatedItems) {
-        if (item.tags.includes(this.state.selectedItem.tags))
+      if (this.state.selectedTag.length > 0) {
+        if (item.tags.includes(this.state.selectedTag))
           return true;
         else
           return false;
       }
-      else if (this.state.openDoneModal === false) {
-        if (item.name.toUpperCase().includes(this.state.searchText.toUpperCase()))
-          return true;
-        else
-          return false;
-      }
-      else {
+      if (this.state.done) {
         if (item.qty || item.unit)
           return true;
         else
           return false;
       }
+      if (this.state.searchText.length > 0) {
+        if (item.name.toUpperCase().includes(this.state.searchText.toUpperCase()))
+          return true;
+        else
+          return false;
+      }
+      return true;
     }).map((item,index) => {
       return (
         <Item
@@ -254,97 +285,90 @@ class App extends Component {
           {/* <Menu.Item>
             <Icon name='refresh' fitted circular link onClick={this.clearSearchText.bind(this)}/>
           </Menu.Item> */}
-          <Menu.Item position="right">
+          {/* <Menu.Item position="right">
             <Icon link name="grid layout" circular onClick={this.toggleNavigator}/>
           </Menu.Item>          
           <Menu.Item position="right">
             <Icon link name="font" circular onClick={this.toggleAZ}/>
-          </Menu.Item>          
+          </Menu.Item>           */}
           <Menu.Item position="right">
-            <Icon link name="check" circular onClick={this.clearSearchText}/>
+            <Icon link name="check" circular onClick={this.toggleDone}/>
           </Menu.Item>
         </Menu>
         </Container>
-{/* //        <Button secondary  size="massive" circular icon="compress" style={{position: 'fixed', bottom:32, right:32, display:'block'  }} onClick={this.sendClicked}/>           */}
+        {/* <TransitionablePortal open={true} transition={{animation:'fade left', duration:500}}  >   */}
+          {/* <Segment inverted  floated="right" style={{position:'fixed', right:0, top:"50%", margin:"0px", height:"100%", zIndex:500}} verticalAlign="middle"> */}
+            <Icon name="angle left" size="big" style={{position:'fixed', right:0, top:"50%", margin:"0px", height:"100%", zIndex:1000}} floated="right"  onClick={this.toggleAZ}/> 
+          {/* </Segment> */}
+        {/* </TransitionablePortal > */}
+        <Button secondary  size="huge" circular icon="grid layout" style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.toggleNavigator}/>    
         <Table unstackable selectable striped width="16" style={{marginTop:this.state.contentTopMargin}}>
           <Table.Body>
             {items}
           </Table.Body>
         </Table>
-        <TransitionablePortal open={this.state.openSearch} transition={{animation:'fade', duration:500}}  closeOnDocumentClick={true}  onClose={this.closeSearch}  onOpen={this.onOpenSearch}>  
-          <Segment inverted  style={{position: 'fixed', top:0, left:0, zIndex: 1000, width:"100%", borderRadius:"0em"}} textAlign="center">
-          <input inverted transparent id="my-text-field" className="mdc-text-field__input" style={{color:'white'}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}/>
 
-          {/* <Input placeholder="Search"   inverted transparent style={{width:150, fontSize:21}} showNoResults={false} fluid={true} size="small" ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)} {...this.props}
-     //        icon={<Icon name='delete'  circular link onClick={this.clearSearchText.bind(this)}/>}
-              action={<Button  color="teal" icon='delete' link onClick={this.clearSearchText.bind(this)}/>}
-            /> */}
-          </Segment>
-        </TransitionablePortal>
-
-        <TransitionablePortal open={this.state.openNavigator} transition={{animation:'slide down', duration:250}}  closeOnDocumentClick={true}  onClose={this.closeNavigator}>  
-          <Segment size="massive" inverted style={{ left: '0%', position: 'fixed', top: '51px', zIndex: 1000, width:"100%", height:"100%" }} textAlign="center">
+        <TransitionablePortal open={this.state.openNavigator} transition={{animation:'fade up', duration:250}}  closeOnDocumentClick={true}  onClose={this.closeNavigator}>  
+          <Segment size="massive" inverted style={{ left: '0%', position: 'fixed', top: '51px', zIndex: 600, width:"100%", height:"100%" }} textAlign="center" onClick={this.toggleNavigator} >
             <Button.Group widths={3} style={{height:80}} >
-              <Button color="orange" style={{borderRadius:"0em"}}>Citrus</Button>
-              <Button color="yellow" style={{borderRadius:"0em"}}>Tropical Fruit and Melons</Button>
-              <Button color="violet" style={{borderRadius:"0em"}}>Berries and Grapes</Button>
+              <Button color="orange" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Citrus</Button>
+              <Button color="yellow" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Tropical Fruit and Melons</Button>
+              <Button color="violet" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Berries and Grapes</Button>
             </Button.Group>
             <Button.Group widths={3} style={{height:80}}>
-            <Button color="blue" style={{borderRadius:"0em"}}>Stone Fruit</Button>
-              <Button color="olive" style={{borderRadius:"0em"}}>Apples and Pears</Button>
-              <Button color="green" style={{borderRadius:"0em"}}>Leafy Greens</Button>
+            <Button color="blue" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Stone Fruit</Button>
+              <Button color="olive" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Apples and Pears</Button>
+              <Button color="green" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Leafy Greens</Button>
             </Button.Group>
             <Button.Group widths={3} style={{height:80}}>
-              <Button color="brown" style={{borderRadius:"0em"}}>Potatoes and Pumpkin</Button>
-              <Button color="purple" style={{borderRadius:"0em"}}>Root Vegetables</Button>
-              <Button color="teal" style={{borderRadius:"0em"}}>Fruit Vegetables</Button>              
+              <Button color="brown" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Potatoes and Pumpkin</Button>
+              <Button color="purple" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Root Vegetables</Button>
+              <Button color="teal" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Fruit Vegetables</Button>              
             </Button.Group>
             <Button.Group widths={3} style={{height:80}}>
-              <Button color="pink" style={{borderRadius:"0em"}}>Salads and Sprouts</Button>
+              <Button color="pink" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Salads and Sprouts</Button>
               <Button color="black"/>
-              <Button size='massive' icon="arrow up" onClick={this.closeNavigator} className="ui black button" />
+              <Button color="black"/>
+              {/* <Button size='massive' icon="arrow up" onClick={this.closeNavigator} className="ui black button" /> */}
             </Button.Group>
           </Segment>
         </TransitionablePortal>
 
-        <TransitionablePortal open={this.state.openAZ} transition={{animation:'slide down', duration:250}}  closeOnDocumentClick={true}  onClose={this.closeAZ} onOpen={this.deselectLetter}>  
-          <Segment size="massive" inverted compact  style={{left: '0%', position: 'fixed', top: '51px', zIndex: 1000, width:"100%", height:"100", backgroundcolor:"#FF2020" }} textAlign="center">
-            <Button.Group size="big" widths="7" >
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>A</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>B</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>C</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>D</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>E</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>F</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>G</Button>
+        <TransitionablePortal open={this.state.openAZ} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={true}  onClose={this.closeAZ} onOpen={this.onOpenAZ}>  
+          <Segment raised floated="right" inverted  style={{right: '0%', marginRight:0, position: 'fixed', top: '50px', zIndex: 1000, height:"100%", width:"auto"}} >
+            <Button.Group vertical size="large" widths="13" >
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('A')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>A</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('B')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>B</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('C')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>C</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('D')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>D</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('E')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>E</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('F')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>F</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('G')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>G</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('H')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>H</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('I')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>I</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('J')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>J</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('K')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>K</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('L')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>L</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('M')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>M</Button>
             </Button.Group>
-            <Button.Group size="big" widths="7" >
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>H</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>I</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>J</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>K</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>L</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>M</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>N</Button>
+            <Button.Group vertical size="large" widths="13" >
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('N')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>N</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('O')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>O</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('P')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>P</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('Q')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Q</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('R')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>R</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('S')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>S</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('T')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>T</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('U')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>U</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('V')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>V</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('W')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>W</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('X')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>X</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('Y')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Y</Button>
+              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('Z')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Z</Button>
             </Button.Group>
-            <Button.Group size="big" widths="7" >
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>O</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>P</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>Q</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>R</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>S</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>T</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>U</Button>
-            </Button.Group>
-            <Button.Group size="big" widths="7" >
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>V</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>W</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>X</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>Y</Button>
-              <Button className="ui black button compact" onClick={this.selectLetter} style={{borderRadius:"0em"}}>Z</Button>
-              <Button className="ui black button compact" onClick={this.deselectLetter} style={{borderRadius:"0em"}}>-</Button>
+              {/* <Button className="ui black button compact" onClick={this.deselectLetter} style={{borderRadius:"0em"}}>-</Button>
               <Button icon="arrow up" className="ui black button compact" onClick={this.closeAZ} style={{borderRadius:"0em"}}></Button>
-            </Button.Group>
+            </Button.Group> */}
           </Segment>
         </TransitionablePortal>
 
