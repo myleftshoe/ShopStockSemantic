@@ -31,7 +31,7 @@ class App extends Component {
     contentTopMargin:'61px',
     showRelatedItems:false,
     openSearch:false,
-    openNavigator:true,
+    openNavigator:false,
     openAZ:false,
     startingLetters: []
   }
@@ -285,86 +285,93 @@ class App extends Component {
           {/* <Menu.Item>
             <Icon name='refresh' fitted circular link onClick={this.clearSearchText.bind(this)}/>
           </Menu.Item> */}
-          {/* <Menu.Item position="right">
-            <Icon link name="grid layout" circular onClick={this.toggleNavigator}/>
-          </Menu.Item>          
           <Menu.Item position="right">
             <Icon link name="font" circular onClick={this.toggleAZ}/>
-          </Menu.Item>           */}
+          </Menu.Item>          
           <Menu.Item position="right">
+            <Icon link name="grid layout" circular onClick={this.toggleNavigator}/>
+          </Menu.Item>          
+          {/* <Menu.Item position="right">
             <Icon link name="check" circular onClick={this.toggleDone}/>
-          </Menu.Item>
+          </Menu.Item> */}
         </Menu>
         </Container>
         {/* <TransitionablePortal open={true} transition={{animation:'fade left', duration:500}}  >   */}
           {/* <Segment inverted  floated="right" style={{position:'fixed', right:0, top:"50%", margin:"0px", height:"100%", zIndex:500}} verticalAlign="middle"> */}
-            <Icon name="angle left" size="big" style={{position:'fixed', right:0, top:"50%", margin:"0px", height:"100%", zIndex:1000}} floated="right"  onClick={this.toggleAZ}/> 
+            {/* <Icon name="angle left" size="big" style={{position:'fixed', right:0, top:"50%", margin:"0px", height:"100%", zIndex:1000}} floated="right"  onClick={this.toggleAZ}/>  */}
           {/* </Segment> */}
         {/* </TransitionablePortal > */}
-        <Button secondary  size="huge" circular icon="grid layout" style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.toggleNavigator}/>    
+        <Button secondary  size="huge" circular icon={this.state.done ? "arrow left":"check"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.toggleDone}/>    
         <Table unstackable selectable striped width="16" style={{marginTop:this.state.contentTopMargin}}>
           <Table.Body>
             {items}
           </Table.Body>
         </Table>
 
-        <TransitionablePortal open={this.state.openNavigator} transition={{animation:'fade up', duration:250}}  closeOnDocumentClick={true}  onClose={this.closeNavigator}>  
-          <Segment size="massive" inverted style={{ left: '0%', position: 'fixed', top: '51px', zIndex: 600, width:"100%", height:"100%" }} textAlign="center" onClick={this.toggleNavigator} >
-            <Button.Group widths={3} style={{height:80}} >
-              <Button color="orange" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Citrus</Button>
-              <Button color="yellow" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Tropical Fruit and Melons</Button>
-              <Button color="violet" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Berries and Grapes</Button>
-            </Button.Group>
-            <Button.Group widths={3} style={{height:80}}>
-            <Button color="blue" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Stone Fruit</Button>
-              <Button color="olive" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Apples and Pears</Button>
-              <Button color="green" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Leafy Greens</Button>
-            </Button.Group>
-            <Button.Group widths={3} style={{height:80}}>
-              <Button color="brown" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Potatoes and Pumpkin</Button>
-              <Button color="purple" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Root Vegetables</Button>
-              <Button color="teal" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Fruit Vegetables</Button>              
-            </Button.Group>
-            <Button.Group widths={3} style={{height:80}}>
-              <Button color="pink" onClick={this.handleTagClick} style={{borderRadius:"0em"}}>Salads and Sprouts</Button>
-              <Button color="black"/>
-              <Button color="black"/>
+        <TransitionablePortal open={this.state.openNavigator} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={true}  onClose={this.closeNavigator}>  
+          <Segment size="massive" raised floated="right" inverted style={{ right: '0%', margin:0, padding:0, position: 'fixed', top: '54px', zIndex: 1000, width:"40%", height:"100%" }} textAlign="center" onClick={this.toggleNavigator} >
+            <Button.Group vertical compact>
+              <Button color="orange" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Citrus</Button>
+              <Button color="yellow" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Tropical Fruit and Melons</Button>
+              <Button color="violet" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Berries and Grapes</Button>
+              <Button color="blue"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Stone Fruit</Button>
+              <Button color="olive"  onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Apples and Pears</Button>
+              <Button color="green"  onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Leafy Greens</Button>
+              <Button color="brown"  onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Potatoes and Pumpkin</Button>
+              <Button color="purple" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Root Vegetables</Button>
+              <Button color="teal"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Fruit Vegetables</Button>              
+              <Button color="pink"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Salads and Sprouts</Button>
               {/* <Button size='massive' icon="arrow up" onClick={this.closeNavigator} className="ui black button" /> */}
             </Button.Group>
           </Segment>
         </TransitionablePortal>
 
-        <TransitionablePortal open={this.state.openAZ} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={true}  onClose={this.closeAZ} onOpen={this.onOpenAZ}>  
-          <Segment raised floated="right" inverted  style={{right: '0%', marginRight:0, position: 'fixed', top: '50px', zIndex: 1000, height:"100%", width:"auto"}} >
-            <Button.Group vertical size="large" widths="13" >
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('A')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>A</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('B')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>B</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('C')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>C</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('D')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>D</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('E')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>E</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('F')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>F</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('G')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>G</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('H')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>H</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('I')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>I</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('J')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>J</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('K')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>K</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('L')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>L</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('M')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>M</Button>
+        <TransitionablePortal open={this.state.openAZ} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={true}  onClose={this.closeAZ} onOpen={this.onOpenAZ} >  
+          <Segment basic raised floated="right" inverted  style={{right: '0%', marginRight:0, borderRadius:"0em", position:'fixed', top: '54px', zIndex: 1000, height:"100%", width:"40%"}} >
+            <Button.Group widths="3" style={{height:40}}>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('A')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>A</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('B')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>B</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('C')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>C</Button>
             </Button.Group>
-            <Button.Group vertical size="large" widths="13" >
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('N')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>N</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('O')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>O</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('P')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>P</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('Q')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Q</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('R')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>R</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('S')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>S</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('T')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>T</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('U')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>U</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('V')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>V</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('W')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>W</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('X')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>X</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('Y')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Y</Button>
-              <Button className="ui black button compact " disabled={!this.state.startingLetters.includes('Z')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Z</Button>
+            <Button.Group widths="3" style={{height:40}}>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('D')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>D</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('E')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>E</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('F')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>F</Button>
+            </Button.Group>
+            <Button.Group widths="3" style={{height:40}}>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('G')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>G</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('H')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>H</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('I')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>I</Button>
+            </Button.Group>
+            <Button.Group widths="3" style={{height:40}}>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('J')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>J</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('K')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>K</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('L')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>L</Button>
+            </Button.Group>
+            <Button.Group widths="3" style={{height:40}}>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('M')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>M</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('N')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>N</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('O')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>O</Button>
+            </Button.Group>
+            <Button.Group widths="3" style={{height:40}}>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('P')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>P</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('Q')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Q</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('R')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>R</Button>
+            </Button.Group>
+            <Button.Group widths="3" style={{height:40}}>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('S')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>S</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('T')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>T</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('U')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>U</Button>
+            </Button.Group>
+            <Button.Group widths="3" style={{height:40}}>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('V')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>V</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('W')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>W</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('X')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>X</Button>
+            </Button.Group>
+            <Button.Group widths="3" style={{height:40}}>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('Y')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Y</Button>
+              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('Z')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Z</Button>
+              <Button className="ui black compact"/>
             </Button.Group>
               {/* <Button className="ui black button compact" onClick={this.deselectLetter} style={{borderRadius:"0em"}}>-</Button>
               <Button icon="arrow up" className="ui black button compact" onClick={this.closeAZ} style={{borderRadius:"0em"}}></Button>
