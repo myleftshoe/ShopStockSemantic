@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Dropdown,List, Icon, Modal, Input, Rail, Search, Table, Grid, Transition, Container, Popup, Header, Menu, Segment, TransitionablePortal} from 'semantic-ui-react';
+import {Button, Dropdown,List, Icon, Modal, Input, Image,Rail, Search, Table, Grid, Transition, Container, Popup, Header, Menu, Segment, TransitionablePortal} from 'semantic-ui-react';
 
 import './App.css';
 
@@ -28,7 +28,7 @@ class App extends Component {
     selectedItem:{name:"", qty:0, unit:"", tags:""},
     selectedLetter: "",
     selectedTag: "",
-    contentTopMargin:'61px',
+    contentTopMargin:'54px',
     showRelatedItems:false,
     openSearch:false,
     openNavigator:false,
@@ -97,12 +97,12 @@ class App extends Component {
 
   openKeypad = (e) => {
     this.setState({openKeypad: true});
-    this.setState({contentTopMargin:'61px'});
+    this.setState({contentTopMargin:'54px'});
   }
 
   closeKeypad = (e) => {
     this.setState({openKeypad: false});
-    this.setState({contentTopMargin:'61px'});
+    this.setState({contentTopMargin:'54px'});
   }
 
   toggleSearch = (e) => {
@@ -144,14 +144,15 @@ class App extends Component {
     this.setState({startingLetters:distinctLetters});
   }
 
-  selectLetter = (item, e) => {
-    console.log(e.children);
-    if (this.state.selectedLetter === e.children) {
+  selectLetter = (e, p) => {
+    console.log(p);
+    e.stopPropagation();
+    if (this.state.selectedLetter === p.children) {
       this.deselectLetter();
-      this.closeAZ();
+//      this.closeAZ();
     }
     else
-      this.setState({selectedLetter:e.children});
+      this.setState({selectedLetter:p.children});
 //    this.closeAZ();
   }
 
@@ -213,7 +214,6 @@ class App extends Component {
 
   render() {
     const items = this.state.items.filter((item, index) => {
-      console.log(item.tags);
       if (this.state.selectedLetter.length > 0) {
         if (item.name.charAt(0).toUpperCase() === this.state.selectedLetter.toUpperCase())
           return true;
@@ -297,7 +297,7 @@ class App extends Component {
         </Table>
 
         <TransitionablePortal open={this.state.openNavigator} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={true}  onClose={this.closeNavigator}>  
-          <Segment size="massive" raised floated="right" inverted style={{ right: '0%', margin:0, padding:0, position: 'fixed', top: '54px', zIndex: 1000, width:"40%", height:"100%" }} textAlign="center" onClick={this.toggleNavigator} >
+          <Segment size="massive" raised floated="right" inverted style={{ borderRadius:"0em", right: '0%', margin:0, padding:0, paddingLeft:1, position: 'fixed', top: '54px', zIndex: 1000, width:"40%", height:"100%",borderRadius:"0em" }} textAlign="center" >
             <Button.Group vertical compact>
               <Button color="orange" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Citrus</Button>
               <Button color="yellow" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Tropical Fruit and Melons</Button>
@@ -310,68 +310,74 @@ class App extends Component {
               <Button color="teal"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Fruit Vegetables</Button>              
               <Button color="pink"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Salads and Sprouts</Button>
             </Button.Group>
+            <Segment basic textAlign="center" fluid style={{position:'fixed',width:"40%", bottom:0, right:0}}>
+              <Button icon="arrow right" size="huge" className="ui black" onClick={this.closeNavigator}></Button>
+            </Segment>
           </Segment>
         </TransitionablePortal>
 
         <TransitionablePortal open={this.state.openAZ} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={true}  onClose={this.closeAZ} onOpen={this.onOpenAZ} >  
-          <Segment basic raised floated="right" inverted  style={{right: '0%', marginRight:0, borderRadius:"0em", position:'fixed', top: '54px', zIndex: 1000, height:"100%", width:"40%"}} >
-            <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('A')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>A</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('B')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>B</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('C')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>C</Button>
+          <Segment basic raised floated="right" inverted  style={{right: '0%', marginRight:0, borderRadius:"0em", position:'fixed', top: '54px', zIndex: 1000, height:"100%", width:"40%"}}  >
+            <Button.Group widths="3" style={{height:40}} >
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='A'} disabled={!this.state.startingLetters.includes('A')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>A</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='B'} disabled={!this.state.startingLetters.includes('B')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>B</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='C'} disabled={!this.state.startingLetters.includes('C')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>C</Button>
             </Button.Group>
             <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('D')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>D</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('E')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>E</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('F')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>F</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='D'} disabled={!this.state.startingLetters.includes('D')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>D</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='E'} disabled={!this.state.startingLetters.includes('E')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>E</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='F'} disabled={!this.state.startingLetters.includes('F')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>F</Button>
             </Button.Group>
             <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('G')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>G</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('H')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>H</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('I')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>I</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='G'} disabled={!this.state.startingLetters.includes('G')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>G</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='H'} disabled={!this.state.startingLetters.includes('H')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>H</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='I'} disabled={!this.state.startingLetters.includes('I')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>I</Button>
             </Button.Group>
             <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('J')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>J</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('K')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>K</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('L')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>L</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='J'} disabled={!this.state.startingLetters.includes('J')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>J</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='K'} disabled={!this.state.startingLetters.includes('K')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>K</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='L'} disabled={!this.state.startingLetters.includes('L')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>L</Button>
             </Button.Group>
             <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('M')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>M</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('N')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>N</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('O')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>O</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='M'} disabled={!this.state.startingLetters.includes('M')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>M</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='N'} disabled={!this.state.startingLetters.includes('N')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>N</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='O'} disabled={!this.state.startingLetters.includes('O')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>O</Button>
             </Button.Group>
             <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('P')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>P</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('Q')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Q</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('R')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>R</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='P'} disabled={!this.state.startingLetters.includes('P')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>P</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='Q'} disabled={!this.state.startingLetters.includes('Q')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Q</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='R'} disabled={!this.state.startingLetters.includes('R')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>R</Button>
             </Button.Group>
             <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('S')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>S</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('T')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>T</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('U')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>U</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='S'} disabled={!this.state.startingLetters.includes('S')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>S</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='T'} disabled={!this.state.startingLetters.includes('T')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>T</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='U'} disabled={!this.state.startingLetters.includes('U')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>U</Button>
             </Button.Group>
             <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('V')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>V</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('W')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>W</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('X')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>X</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='V'} disabled={!this.state.startingLetters.includes('V')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>V</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='W'} disabled={!this.state.startingLetters.includes('W')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>W</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='X'} disabled={!this.state.startingLetters.includes('X')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>X</Button>
             </Button.Group>
             <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('Y')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Y</Button>
-              <Button className="ui black compact" disabled={!this.state.startingLetters.includes('Z')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Z</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='Y'} disabled={!this.state.startingLetters.includes('Y')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Y</Button>
+              <Button className="ui black compact" toggle active={this.state.selectedLetter==='Z'} disabled={!this.state.startingLetters.includes('Z')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Z</Button>
               <Button className="ui black compact"/>
             </Button.Group>
+            <Segment basic textAlign="center" fluid style={{position:'fixed',width:"40%", bottom:0, right:0}}>
+              <Button icon="arrow right" size="huge" className="ui black" onClick={this.closeAZ}></Button>
+            </Segment>
           </Segment>
         </TransitionablePortal>
 
         <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide down', duration:500}}  closeOnDocumentClick={false} onOpen={this.openKeypad} onClose={this.closeKeypad}>  
-          <Segment inverted style={{ left: '0%', position: 'fixed', top: '50px', zIndex: 1000, width:"100%", height:"auto"}} textAlign="center">
-            <Header>{this.state.selectedItem.name}</Header>
+          <Segment inverted style={{ left: '0%', position: 'fixed', top: '54px', zIndex: 1000, width:"100%", height:"auto", borderRadius:0, paddingTop:0, paddingBottom:4}} textAlign="center">
+            <Header style={{margin:4}}>{this.state.selectedItem.name}</Header>
+            <Header style={{margin:4}}>{this.state.selectedItem.qty + "  " + this.state.selectedItem.unit}</Header>
           </Segment>
         </TransitionablePortal>
         <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide up', duration:300}}  closeOnDocumentClick={false} >  
-          <Segment textAlign="center" inverted style={{ left: '0%', position: 'fixed', bottom: '0px', zIndex: 1000, width:"100%", height:"auto"}}>
-            <Header>{this.state.selectedItem.qty + "  " + this.state.selectedItem.unit}</Header>
-            <List selection relaxed  divided inverted horizontal>
+          <Segment textAlign="center" inverted style={{ left: '0%', position: 'fixed', bottom: '0px', zIndex: 1000, width:"100%", height:"auto", borderRadius:0, paddingTop:8}}>
+            <List link selection relaxed mini divided inverted horizontal>
               <List.Item onClick={this.setUnit}>bags</List.Item>
               <List.Item onClick={this.setUnit}>boxes</List.Item>
               <List.Item onClick={this.setUnit}>trays</List.Item>
@@ -379,30 +385,30 @@ class App extends Component {
               <List.Item onClick={this.setUnit}>bin</List.Item>
               <List.Item onClick={this.setUnit}>shelf</List.Item>
             </List>
-              <Button.Group size="big" widths="4" >
-                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>1</Button>
-                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>2</Button>
-                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>3</Button>
-                <Button className="ui black button" active = {false} onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>¼</Button>
-              </Button.Group>
-              <Button.Group size="big" widths="4" >
-                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>4</Button>
-                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>5</Button>
-                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>6</Button>
-                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>½</Button>
-              </Button.Group>
-              <Button.Group size="big" widths="4" >
-                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>7</Button>
-                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>8</Button>
-                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>9</Button>
-                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>¾</Button>
-              </Button.Group>
-              <Button.Group size="big" widths="4" >
-                <Button className="ui black button" icon="exclamation" onClick={this.closeKeypad} style={{margin:0, borderRadius:"0em"}}></Button>
-                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>0</Button>
-                <Button className="ui black button" icon="delete" onClick={this.clearQty} style={{margin:0, borderRadius:"0em"}}></Button>
-                <Button className="ui black button" icon="angle down" onClick={this.closeKeypad} style={{margin:0, borderRadius:"0em"}}></Button>
-              </Button.Group>
+            <Button.Group size="big" widths="4" >
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>1</Button>
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>2</Button>
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>3</Button>
+              <Button className="ui black button" active = {false} onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>¼</Button>
+            </Button.Group>
+            <Button.Group size="big" widths="4" >
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>4</Button>
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>5</Button>
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>6</Button>
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>½</Button>
+            </Button.Group>
+            <Button.Group size="big" widths="4" >
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>7</Button>
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>8</Button>
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>9</Button>
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>¾</Button>
+            </Button.Group>
+            <Button.Group size="big" widths="4" >
+              <Button className="ui black button" icon="exclamation" onClick={this.closeKeypad} style={{margin:0, borderRadius:"0em"}}></Button>
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>0</Button>
+              <Button className="ui black button" icon="delete" onClick={this.clearQty} style={{margin:0, borderRadius:"0em"}}></Button>
+              <Button className="ui black button" icon="angle down" onClick={this.closeKeypad} style={{margin:0, borderRadius:"0em"}}></Button>
+            </Button.Group>
           </Segment>
         </TransitionablePortal>               
       </div>
