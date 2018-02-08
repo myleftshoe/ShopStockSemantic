@@ -147,7 +147,7 @@ class App extends Component {
     e.stopPropagation();
     console.log(p.children);
     this.setState({selectedTag: {name:p.children, color:p.color}});
-    this.closeNavigator();    
+  //  this.closeNavigator();    
   }
 
 // AZ *****************************************  
@@ -207,7 +207,7 @@ class App extends Component {
     _item.qty = "";
     _item.unit = ""
     items[index] = Object.assign({},_item);
-    this.setState({items:items});//, selectedItem:_item, openKeypad:true});//, () => setTimeout(() => this.ref.focus(),0));
+    this.setState({items:items, selectedItem:_item});//, openKeypad:true});//, () => setTimeout(() => this.ref.focus(),0));
   }
 
   setUnit = (item,e) => {
@@ -274,10 +274,10 @@ class App extends Component {
       
       <div>
         <Container>
-        <Menu className="ui fixed compact inverted">
+        <Menu size="huge" className="ui fixed compact inverted" style={{height:62}}>
         <Container>
           <Menu.Item>
-            <Input type="text" icon="search" iconPosition="left" inverted transparent id="my-text-field" style={{color:'white',width:120}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}
+            <Input type="text" icon="search" iconPosition="left" inverted transparent id="my-text-field" style={{color:'white',width:180}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}
               onClose={this.clearSearchText}
             />
           </Menu.Item>
@@ -291,14 +291,14 @@ class App extends Component {
         </Menu>
         </Container>
         <Button secondary  size="huge" circular icon={this.state.done ? "arrow left":"check"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.toggleDone}/>    
-        <Table unstackable selectable striped width="16" style={{marginTop:54}}>
+        <Table unstackable selectable striped width="16" style={{marginTop:62, marginBottom:'100%'}}>
           <Table.Body>
             {items}
           </Table.Body>
         </Table>
 
         <TransitionablePortal open={this.state.openNavigator} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={false}  onClose={this.closeNavigator}>  
-          <Segment size="massive" raised floated="right" inverted style={{ borderRadius:"0em", right: '0%', margin:0, padding:0, paddingLeft:1, position: 'fixed', top: '54px', zIndex: 1000, width:"40%", height:"100%",borderRadius:"0em" }} textAlign="center" >
+          <Segment size="massive" raised floated="right" inverted style={{ borderRadius:"0em", right: '0%', margin:0, padding:0, paddingLeft:1, position: 'fixed', top: '62px', zIndex: 1000, width:"40%", height:"100%",borderRadius:"0em" }} textAlign="center" >
             <Button.Group vertical compact>
               <Button color="orange" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Citrus</Button>
               <Button color="yellow" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Tropical Fruit and Melons</Button>
@@ -312,13 +312,13 @@ class App extends Component {
               <Button color="pink"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Salads and Sprouts</Button>
             </Button.Group>
             <Segment basic textAlign="center" style={{position:'fixed',width:"40%", bottom:0, right:0}}>
-              <Button icon="arrow right" size="huge" className="ui black" onClick={this.closeNavigator}></Button>
+              <Button icon="angle up" size="huge" className="ui black" onClick={this.closeNavigator}></Button>
             </Segment>
           </Segment>
         </TransitionablePortal>
 
         <TransitionablePortal open={this.state.openAZ} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={false}  onClose={this.closeAZ} onOpen={this.onOpenAZ} >  
-          <Segment basic raised floated="right" inverted  style={{right: '0%', marginRight:0, borderRadius:"0em", position:'fixed', top: '54px', zIndex: 1000, height:"100%", width:"40%"}}  >
+          <Segment basic raised floated="right" inverted  style={{right: '0%', marginRight:0, borderRadius:"0em", position:'fixed', top: '62px', zIndex: 1000, height:"100%", width:"40%"}}  >
             <Button.Group widths="3" style={{height:40}} >
               <Button className="ui black compact" toggle active={this.state.selectedLetter==='A'} disabled={!this.state.startingLetters.includes('A')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>A</Button>
               <Button className="ui black compact" toggle active={this.state.selectedLetter==='B'} disabled={!this.state.startingLetters.includes('B')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>B</Button>
@@ -364,8 +364,8 @@ class App extends Component {
               <Button className="ui black compact" toggle active={this.state.selectedLetter==='Z'} disabled={!this.state.startingLetters.includes('Z')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Z</Button>
               <Button className="ui black compact"/>
             </Button.Group>
-            <Segment basic textAlign="center" fluid style={{position:'fixed',width:"40%", bottom:0, right:0}}>
-              <Button icon="arrow right" size="huge" className="ui black" onClick={this.closeAZ}></Button>
+            <Segment basic textAlign="center" style={{position:'fixed',width:"40%", bottom:0, right:0}}>
+              <Button icon="angle up" size="huge" className="ui black" onClick={this.closeAZ}></Button>
             </Segment>
           </Segment>
         </TransitionablePortal>

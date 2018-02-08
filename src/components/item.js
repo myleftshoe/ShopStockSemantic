@@ -3,11 +3,11 @@ import {Table} from 'semantic-ui-react'
 
 const item = (props) => {
     return (
-        <Table.Row onClick={props.rowClickEvent}>
+        <Table.Row style={{width:"100%"}} onClick={props.rowClickEvent}>
             <Table.Cell>{props.children}</Table.Cell>
             {/* <Table.Cell>{props.qty}</Table.Cell> */}
             {/* <TextField hintText="Hint Text" defaultValue={props.qty}></TextField>             */}
-            <Table.Cell float="right">
+            <Table.Cell  float="right">
                 { props.qty + " " + props.unit}
             </Table.Cell>
 
