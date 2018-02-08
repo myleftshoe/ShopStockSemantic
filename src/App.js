@@ -9,6 +9,7 @@ import {
   Input,
   Divider,
   Image,
+  Label,  
   Rail,
   Search,
   Table, Grid,
@@ -291,7 +292,7 @@ class App extends Component {
         </Menu>
         </Container>
         <Button secondary  size="huge" circular icon={this.state.done ? "arrow left":"check"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.toggleDone}/>    
-        <Table unstackable selectable striped width="16" style={{marginTop:62, marginBottom:'100%'}}>
+        <Table unstackable selectable striped singleLine fixed width={16} style={{marginTop:62, marginBottom:'100%'}}>
           <Table.Body>
             {items}
           </Table.Body>
@@ -377,10 +378,15 @@ class App extends Component {
           </Segment>
         </TransitionablePortal> */}
         <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide up', duration:300}}  closeOnDocumentClick={false} onClose={this.closeKeypad}>  
-          <Segment textAlign="center" inverted style={{ left: '0%', position: 'fixed', bottom: '0px', zIndex: 1000, width:"100%", height:"auto", borderRadius:0, paddingTop:8}}>
-            <Header style={{margin:4}}>{this.state.selectedItem.name}</Header>
-            <Header style={{margin:4}}>{this.state.selectedItem.qty + "  " + this.state.selectedItem.unit}</Header>
-            <Divider/>
+          <Segment textAlign="center" inverted transparent style={{ left: '0%', position: 'fixed', bottom: '0px', zIndex: 1000, width:"100%", height:"auto", borderRadius:0}}>
+            <Input style={{width:"100%", marginTop:0, marginBottom:12}} type="text" inverted defaultValue={this.state.selectedItem.name} labelPosition="right" label={
+              <Label>
+                {this.state.selectedItem.qty}
+                <Label.Detail>{this.state.selectedItem.unit}</Label.Detail>
+              </Label>}>
+            </Input>
+            {/* <Header style={{margin:4}}>{this.state.selectedItem.qty + "  " + this.state.selectedItem.unit}</Header> */}
+            {/* <Divider/> */}
             <List link selection relaxed divided inverted horizontal style={{marginBottom:8}}>
               <List.Item onClick={this.setUnit}>bags</List.Item>
               <List.Item onClick={this.setUnit}>boxes</List.Item>
