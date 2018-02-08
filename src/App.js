@@ -1,35 +1,41 @@
 import React, { Component } from 'react';
-import {Button, Dropdown,List, Icon, Modal, Input, Image,Rail, Search, Table, Grid, Transition, Container, Popup, Header, Menu, Segment, TransitionablePortal} from 'semantic-ui-react';
-
 import './App.css';
-
-import Item from "./components/item";
+import {
+  Button,
+  Dropdown,
+  List,
+  Icon,
+  Modal,
+  Input,
+  Divider,
+  Image,
+  Rail,
+  Search,
+  Table, Grid,
+  Transition,
+  Container,
+  Popup,
+  Header,
+  Menu,
+  Segment,
+  TransitionablePortal
+} from 'semantic-ui-react';
 import TransitionGroup from 'semantic-ui-react/dist/commonjs/modules/Transition/TransitionGroup';
-//import Detail from "./components/detail";
+import Item from "./components/item";
 
 //const FETCHURL = "https://api.jsonbin.io/b/5a6a9226814505706ad40ea9";
 const FETCHURL = "https://api.jsonbin.io/b/5a7987179a230212562a68da";
-
-const options = [
-  { key: 'BAGS', text: 'BAGS', value: 'BAGS' },
-  { key: 'BOXES', text: 'BOXES', value: 'BOXES' },
-  { key: 'TRAYS', text: 'TRAYS', value: 'TRAYS' },
-  { key: 'BIN', text: 'BIN', value: 'BIN' },
-  { key: 'SHELF', text: 'SHELF', value: 'SHELF' },  
-]
 
 class App extends Component {
 
   state = {
     searchText: "",
-    items: [{name:"dummy", qty:0, unit:"", tags:""}],
+    items: [{name:"", qty:"", unit:"", tags:""}],
     openKeypad: false,
     done: false,
     selectedItem:{name:"", qty:0, unit:"", tags:""},
     selectedLetter: "",
-    selectedTag: "",
-    contentTopMargin:'54px',
-    showRelatedItems:false,
+    selectedTag: {name:"", color:"white"},
     openSearch:false,
     openNavigator:false,
     openAZ:false,
@@ -58,52 +64,7 @@ class App extends Component {
     }
   }
 
-  changeSearchText = (e) => {
-    console.log(e.target.value);
-      this.setState({searchText: e.target.value, showRelatedItems:false});
-  }
-
-  clearSearchText = (e) => {
-    console.log((this.input1));
-    // this.input1.setValue("");
-    this.input1.value = "";
-    this.setState({searchText: "", showRelatedItems:false});
-  }
-
-  handleRef = component => (this.ref = component);
-  handleClick = (item,e) => {
-    console.log("row clicked" + item.name);
-    if (item.name === this.state.selectedItem.name) {
-      this.setState({selectedItem:{name:"", qty:0, unit:""}});
-      this.closeKeypad();
-    }
-    else {
-      // Without setTimeout the modal has not rendered when focus() is called. 
-      // setTimeouts() are executed last in the function all stack so 0 delay works!
-      this.setState({selectedItem:item, showRelatedItems:true});//, () => setTimeout(() => this.ref.focus(),0));
-      this.openKeypad();
-    }
-  }
-
-  
-  toggleDone = (e) => {
-    this.setState({done: !this.state.done});//, () => setTimeout(() => this.ref.focus(),0));
-  }
-
-  
-  sendClicked = (e) => {
-    this.setState({openDoneModal: !this.state.openDoneModal});//, () => setTimeout(() => this.ref.focus(),0));
-  }
-
-  openKeypad = (e) => {
-    this.setState({openKeypad: true});
-    this.setState({contentTopMargin:'54px'});
-  }
-
-  closeKeypad = (e) => {
-    this.setState({openKeypad: false});
-    this.setState({contentTopMargin:'54px'});
-  }
+// Search ************************************
 
   toggleSearch = (e) => {
     this.setState({openSearch: !this.state.openSearch});
@@ -118,16 +79,84 @@ class App extends Component {
     this.setState({openSearch: false});
   }
 
+  changeSearchText = (e) => {
+    console.log(e.target.value);
+      this.setState({searchText: e.target.value});
+  }
+
+  clearSearchText = (e) => {
+    console.log((this.input1));
+    // this.input1.setValue("");
+    this.input1.value = "";
+    this.setState({searchText: ""});
+  }
+
+// Done ****************************  
+  toggleDone = (e) => {
+    this.setState({done: !this.state.done});//, () => setTimeout(() => this.ref.focus(),0));
+  }
+
+
+
+  handleRef = component => (this.ref = component);
+  handleClick = (item,e) => {
+    console.log("row clicked" + item.name);
+    if (this.state.openKeypad)
+      this.closeKeypad();
+    else {
+      // Without setTimeout the modal has not rendered when focus() is called. 
+      // setTimeouts() are executed last in the function all stack so 0 delay works!
+      this.setState({selectedItem:item});//, () => setTimeout(() => this.ref.focus(),0));
+      this.openKeypad();
+    }
+  }
+
+  
+  sendClicked = (e) => {
+    this.setState({openDoneModal: !this.state.openDoneModal});//, () => setTimeout(() => this.ref.focus(),0));
+  }
+
+// Keypad *********************
+
+  openKeypad = () => {
+    this.setState({openAZ:false, openNavigator:false, openKeypad: true});
+  }
+
+  closeKeypad = () => {
+    if (this.state.openKeypad) {
+      this.setState({openKeypad: false});
+    }
+  }
+
+// Navigator ************************  
   toggleNavigator = (e) => {
-    this.setState({openNavigator: !this.state.openNavigator});
+    if (this.state.selectedTag.name.length > 0) {
+      this.setState({selectedTag:{name: "", color: "white"}});
+      this.closeNavigator();
+    }
+    else
+      this.setState({openAZ:false, openNavigator:true, openKeypad: false});
   }
 
-  closeNavigator = (e) => {
-    this.setState({openNavigator: false});
+  closeNavigator = () => {
+    if (this.state.openNavigator)
+      this.setState({openNavigator: false});
   }
 
+  handleTagClick = (e, p) => {
+    e.stopPropagation();
+    console.log(p.children);
+    this.setState({selectedTag: {name:p.children, color:p.color}});
+    this.closeNavigator();    
+  }
+
+// AZ *****************************************  
   toggleAZ = (e) => {
-    this.setState({openAZ: !this.state.openAZ});
+    if (this.state.selectedLetter.length > 0) {
+      this.setState({openAZ: false, selectedLetter:""});
+    }
+    else
+      this.setState({openAZ:true, openNavigator:false, openKeypad: false});
   }
 
   closeAZ = (e) => {
@@ -149,25 +178,16 @@ class App extends Component {
     e.stopPropagation();
     if (this.state.selectedLetter === p.children) {
       this.deselectLetter();
-//      this.closeAZ();
     }
     else
       this.setState({selectedLetter:p.children});
-//    this.closeAZ();
   }
 
   deselectLetter = () => {
     this.setState({selectedLetter:""});
-//    this.closeAZ();
   }
 
-  handleTagClick = (e, p) => {
-    e.stopPropagation();
-    console.log(p.children);
-    this.setState({selectedTag: p.children});
-    this.closeNavigator();    
-  }
-
+// Qty + Unit **************************
   setQty = (item,e) => {
     console.log(e.children);
     const items = Object.assign([], this.state.items);
@@ -177,7 +197,7 @@ class App extends Component {
       _item.qty="";
     _item.qty = _item.qty + e.children;
     items[index] = Object.assign({},_item);
-    this.setState({items:items, selectedItem:_item, openKeypad:true});//, () => setTimeout(() => this.ref.focus(),0));
+    this.setState({items:items, selectedItem:_item});//, openKeypad:true});//, () => setTimeout(() => this.ref.focus(),0));
   }
 
   clearQty = (e) => {
@@ -187,16 +207,14 @@ class App extends Component {
     _item.qty = "";
     _item.unit = ""
     items[index] = Object.assign({},_item);
-    this.setState({items:items, selectedItem:_item, openKeypad:true});//, () => setTimeout(() => this.ref.focus(),0));
+    this.setState({items:items});//, selectedItem:_item, openKeypad:true});//, () => setTimeout(() => this.ref.focus(),0));
   }
 
   setUnit = (item,e) => {
     const items = Object.assign([], this.state.items);
     const index = this.findItemIndexByName(this.state.selectedItem);
     const _item = items[index];
-  //    _item.unit = e.value;
-      _item.unit = e.children;
-  //    _item.qty = this.state.selectedItem.qty;
+    _item.unit = e.children;
     items[index] = Object.assign({},_item);
     this.setState({items:items, selectedItem:_item});
     setTimeout(() => this.setState({openKeypad:false}),600);
@@ -220,8 +238,8 @@ class App extends Component {
         else
           return false;
       }
-      if (this.state.selectedTag.length > 0) {
-        if (item.tags.includes(this.state.selectedTag))
+      if (this.state.selectedTag.name.length > 0) {
+        if (item.tags.includes(this.state.selectedTag.name))
           return true;
         else
           return false;
@@ -251,23 +269,6 @@ class App extends Component {
         > {item.name}</Item>)
     }) 
 
-    const similarItems = this.state.items.filter((item, index) => {
-      if (item.name.toUpperCase().includes("APP"))
-        return true;
-      else
-        return false;
-    }).map((item,index) => {
-      return (
-        <Item
-          key={item.name}
-          qty={item.qty}
-          unit={item.unit}
-          qtyunit={item.qty + " " + item.qty}
-          deleteEvent={this.deleteItem.bind(this, item)}
-          rowClickEvent={this.handleClick.bind(this, item)}
-        > {item.name}</Item>)
-    })     
-
 
     return (
       
@@ -282,21 +283,21 @@ class App extends Component {
           </Menu.Item>
           </Container>
           <Menu.Item position="right">
-            <Icon link name="font" circular onClick={this.toggleAZ}/>
+            <Icon link style={{fontFamily:'Roboto Black'}} circular onClick={this.toggleAZ}>{this.state.selectedLetter.length > 0 ? this.state.selectedLetter : 'AZ'}</Icon>
           </Menu.Item>          
           <Menu.Item position="right">
-            <Icon link name="grid layout" circular onClick={this.toggleNavigator}/>
+            <Icon link name="grid layout" className={this.state.selectedTag.color} circular onClick={this.toggleNavigator}/>
           </Menu.Item>          
         </Menu>
         </Container>
         <Button secondary  size="huge" circular icon={this.state.done ? "arrow left":"check"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.toggleDone}/>    
-        <Table unstackable selectable striped width="16" style={{marginTop:this.state.contentTopMargin}}>
+        <Table unstackable selectable striped width="16" style={{marginTop:54}}>
           <Table.Body>
             {items}
           </Table.Body>
         </Table>
 
-        <TransitionablePortal open={this.state.openNavigator} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={true}  onClose={this.closeNavigator}>  
+        <TransitionablePortal open={this.state.openNavigator} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={false}  onClose={this.closeNavigator}>  
           <Segment size="massive" raised floated="right" inverted style={{ borderRadius:"0em", right: '0%', margin:0, padding:0, paddingLeft:1, position: 'fixed', top: '54px', zIndex: 1000, width:"40%", height:"100%",borderRadius:"0em" }} textAlign="center" >
             <Button.Group vertical compact>
               <Button color="orange" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Citrus</Button>
@@ -310,13 +311,13 @@ class App extends Component {
               <Button color="teal"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Fruit Vegetables</Button>              
               <Button color="pink"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Salads and Sprouts</Button>
             </Button.Group>
-            <Segment basic textAlign="center" fluid style={{position:'fixed',width:"40%", bottom:0, right:0}}>
+            <Segment basic textAlign="center" style={{position:'fixed',width:"40%", bottom:0, right:0}}>
               <Button icon="arrow right" size="huge" className="ui black" onClick={this.closeNavigator}></Button>
             </Segment>
           </Segment>
         </TransitionablePortal>
 
-        <TransitionablePortal open={this.state.openAZ} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={true}  onClose={this.closeAZ} onOpen={this.onOpenAZ} >  
+        <TransitionablePortal open={this.state.openAZ} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={false}  onClose={this.closeAZ} onOpen={this.onOpenAZ} >  
           <Segment basic raised floated="right" inverted  style={{right: '0%', marginRight:0, borderRadius:"0em", position:'fixed', top: '54px', zIndex: 1000, height:"100%", width:"40%"}}  >
             <Button.Group widths="3" style={{height:40}} >
               <Button className="ui black compact" toggle active={this.state.selectedLetter==='A'} disabled={!this.state.startingLetters.includes('A')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>A</Button>
@@ -369,15 +370,18 @@ class App extends Component {
           </Segment>
         </TransitionablePortal>
 
-        <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide down', duration:500}}  closeOnDocumentClick={false} onOpen={this.openKeypad} onClose={this.closeKeypad}>  
+        {/* <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide down', duration:500}}  closeOnDocumentClick={true} onOpen={this.openKeypad} onClose={this.closeKeypad}>  
           <Segment inverted style={{ left: '0%', position: 'fixed', top: '54px', zIndex: 1000, width:"100%", height:"auto", borderRadius:0, paddingTop:0, paddingBottom:4}} textAlign="center">
             <Header style={{margin:4}}>{this.state.selectedItem.name}</Header>
             <Header style={{margin:4}}>{this.state.selectedItem.qty + "  " + this.state.selectedItem.unit}</Header>
           </Segment>
-        </TransitionablePortal>
-        <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide up', duration:300}}  closeOnDocumentClick={false} >  
+        </TransitionablePortal> */}
+        <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide up', duration:300}}  closeOnDocumentClick={false} onClose={this.closeKeypad}>  
           <Segment textAlign="center" inverted style={{ left: '0%', position: 'fixed', bottom: '0px', zIndex: 1000, width:"100%", height:"auto", borderRadius:0, paddingTop:8}}>
-            <List link selection relaxed mini divided inverted horizontal>
+            <Header style={{margin:4}}>{this.state.selectedItem.name}</Header>
+            <Header style={{margin:4}}>{this.state.selectedItem.qty + "  " + this.state.selectedItem.unit}</Header>
+            <Divider/>
+            <List link selection relaxed divided inverted horizontal style={{marginBottom:8}}>
               <List.Item onClick={this.setUnit}>bags</List.Item>
               <List.Item onClick={this.setUnit}>boxes</List.Item>
               <List.Item onClick={this.setUnit}>trays</List.Item>
@@ -389,7 +393,7 @@ class App extends Component {
               <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>1</Button>
               <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>2</Button>
               <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>3</Button>
-              <Button className="ui black button" active = {false} onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>¼</Button>
+              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>¼</Button>
             </Button.Group>
             <Button.Group size="big" widths="4" >
               <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>4</Button>
