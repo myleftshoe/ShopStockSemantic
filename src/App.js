@@ -209,7 +209,7 @@ class App extends Component {
     return -1;
   }
   
-  
+  // Render ************************  
 
   render() {
     const items = this.state.items.filter((item, index) => {
@@ -277,30 +277,18 @@ class App extends Component {
         <Container>
           <Menu.Item>
             <Input type="text" icon="search" iconPosition="left" inverted transparent id="my-text-field" style={{color:'white',width:120}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}
-            onClose={this.clearSearchText}
+              onClose={this.clearSearchText}
             />
-            {/* <Icon link color="white" name="search" circular onClick={this.toggleSearch}/> */}
           </Menu.Item>
           </Container>
-          {/* <Menu.Item>
-            <Icon name='refresh' fitted circular link onClick={this.clearSearchText.bind(this)}/>
-          </Menu.Item> */}
           <Menu.Item position="right">
             <Icon link name="font" circular onClick={this.toggleAZ}/>
           </Menu.Item>          
           <Menu.Item position="right">
             <Icon link name="grid layout" circular onClick={this.toggleNavigator}/>
           </Menu.Item>          
-          {/* <Menu.Item position="right">
-            <Icon link name="check" circular onClick={this.toggleDone}/>
-          </Menu.Item> */}
         </Menu>
         </Container>
-        {/* <TransitionablePortal open={true} transition={{animation:'fade left', duration:500}}  >   */}
-          {/* <Segment inverted  floated="right" style={{position:'fixed', right:0, top:"50%", margin:"0px", height:"100%", zIndex:500}} verticalAlign="middle"> */}
-            {/* <Icon name="angle left" size="big" style={{position:'fixed', right:0, top:"50%", margin:"0px", height:"100%", zIndex:1000}} floated="right"  onClick={this.toggleAZ}/>  */}
-          {/* </Segment> */}
-        {/* </TransitionablePortal > */}
         <Button secondary  size="huge" circular icon={this.state.done ? "arrow left":"check"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.toggleDone}/>    
         <Table unstackable selectable striped width="16" style={{marginTop:this.state.contentTopMargin}}>
           <Table.Body>
@@ -321,7 +309,6 @@ class App extends Component {
               <Button color="purple" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Root Vegetables</Button>
               <Button color="teal"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Fruit Vegetables</Button>              
               <Button color="pink"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Salads and Sprouts</Button>
-              {/* <Button size='massive' icon="arrow up" onClick={this.closeNavigator} className="ui black button" /> */}
             </Button.Group>
           </Segment>
         </TransitionablePortal>
@@ -373,13 +360,8 @@ class App extends Component {
               <Button className="ui black compact" disabled={!this.state.startingLetters.includes('Z')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Z</Button>
               <Button className="ui black compact"/>
             </Button.Group>
-              {/* <Button className="ui black button compact" onClick={this.deselectLetter} style={{borderRadius:"0em"}}>-</Button>
-              <Button icon="arrow up" className="ui black button compact" onClick={this.closeAZ} style={{borderRadius:"0em"}}></Button>
-            </Button.Group> */}
           </Segment>
         </TransitionablePortal>
-
-
 
         <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide down', duration:500}}  closeOnDocumentClick={false} onOpen={this.openKeypad} onClose={this.closeKeypad}>  
           <Segment inverted style={{ left: '0%', position: 'fixed', top: '50px', zIndex: 1000, width:"100%", height:"auto"}} textAlign="center">
