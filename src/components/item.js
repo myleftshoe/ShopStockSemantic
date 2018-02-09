@@ -88,9 +88,9 @@ const item = (props) => {
             // warning={props.item.qty.length === 0 && props.item.unit.length > 0} 
             // positive={props.item.qty.length > 0}
         >
-            <Table.Cell width={6}> {props.children}</Table.Cell>
-            <Table.Cell width={5}> {props.item.tags}</Table.Cell>
-            <Table.Cell width={3}> {props.item.marked ? <Icon name="exclamation" style={{padding:0}}/> : ""}</Table.Cell>
+            <Table.Cell width={11}> {props.children}</Table.Cell>
+            {/* <Table.Cell width={5}> {props.item.tags}</Table.Cell> */}
+            <Table.Cell style={{fontFamily:"Roboto Black"}}  textAlign="right" width={1}> {props.item.marked ? "!" : ""}</Table.Cell>
             <Table.Cell width={4}>
                 { props.item.qty + " " + props.item.unit}
             </Table.Cell>
