@@ -1,13 +1,96 @@
 import React from 'react';
-import {Table} from 'semantic-ui-react'
+import {Table, Icon} from 'semantic-ui-react'
+
+const color = (tag) => {
+    let color="";
+    switch (tag) {
+        case "Citrus" : {
+            color = "#F2711F";
+            break;
+        }
+        case "Leafy Greens" : {
+            color = "DarkGreen"
+            break; 
+        }
+        case "Berries and Grapes" : {
+            color = "#6538C8"
+            break;
+        }        
+        case "Apples and Pears" : {
+            color = "#B3CB1C"
+            break;
+        }        
+        case "Fruit Vegetable" : {
+            color = "#00B3AC"
+            break;
+        }        
+        case "Root Vegetable" : {
+            color = "#A236C7"
+            break;
+        }        
+        case "Stone Fruit" : {
+            color = "#2884CF"
+            break;
+        }        
+        case "Potatoes and Onions" : {
+            color = "#A46741"
+            break;
+        }        
+        case "Tropical Fruit and Melons" : {
+            color = "#FBBC05"
+            break;
+        }   
+        case "Sprouts" : {
+            color = "#DF3C95"
+            break;
+        }        
+        case "Cruciferous" : {
+            color = "#23B947"
+            break;
+        }           
+        case "Herbs" : {
+            color = "Green"
+            break;
+        }           
+        case "Mushrooms" : {
+            color = "Tan"
+            break;
+        }              
+        case "Salad" : {
+            color = "MediumSeaGreen"
+            break;
+        }  
+        case "Peas and Beans" : {
+            color = "OliveDrab"
+            break;
+        }  
+        case "Misc. Fruit" : {
+            color = "Tomato"
+            break;
+        }  
+        case "Stems and Roots" : {
+            color = "Peru"
+            break;
+        }
+        case "Tomatoes" : {
+            color = "Maroon"
+            break;
+        }  
+    }
+    return color;
+}
 
 const item = (props) => {
     return (
         <Table.Row onClick={props.rowClickEvent} 
-            active={props.item.name === props.selectedItem.name}
-            warning={props.item.qty.length === 0 && props.item.unit.length > 0} 
-            positive={props.item.qty.length > 0}>
-            <Table.Cell width={12}> {props.children}</Table.Cell>
+            style={{backgroundColor: color(props.item.tags)}}
+            // active={props.item.name === props.selectedItem.name}
+            // warning={props.item.qty.length === 0 && props.item.unit.length > 0} 
+            // positive={props.item.qty.length > 0}
+        >
+            <Table.Cell width={6}> {props.children}</Table.Cell>
+            <Table.Cell width={5}> {props.item.tags}</Table.Cell>
+            <Table.Cell width={3}> {props.item.marked ? <Icon name="exclamation" style={{padding:0}}/> : ""}</Table.Cell>
             <Table.Cell width={4}>
                 { props.item.qty + " " + props.item.unit}
             </Table.Cell>

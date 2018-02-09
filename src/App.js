@@ -26,7 +26,7 @@ import TransitionGroup from 'semantic-ui-react/dist/commonjs/modules/Transition/
 import Item from "./components/item";
 
 //const FETCHURL = "https://api.jsonbin.io/b/5a6a9226814505706ad40ea9";
-const FETCHURL = "https://api.jsonbin.io/b/5a7987179a230212562a68da";
+const FETCHURL = "https://api.jsonbin.io/b/5a7cfa997ecc101273331408";
 
 class App extends Component {
 
@@ -35,12 +35,14 @@ class App extends Component {
     items: [{name:"", qty:"", unit:"", tags:""}],
     openKeypad: false,
     done: false,
+    marked:false,
     selectedItem:{name:"", qty:0, unit:"", tags:""},
     selectedLetter: "",
     selectedTag: {name:"", color:"white"},
     openSearch:false,
     openNavigator:false,
     openAZ:false,
+    sortDescending:false,
     startingLetters: []
   }
 
@@ -132,6 +134,20 @@ class App extends Component {
 
 // Navigator ************************  
   toggleNavigator = (e) => {
+    this.setState({items: this.state.items.sort(function(i1,i2) {
+      if (i1.tags > i2.tags)
+        return 1
+      if (i1.tags < i2.tags)
+        return -1
+      else {
+        if (i1.name > i2.name)
+          return 1
+        if (i1.name < i2.name)
+          return -1
+      }
+      return 0;
+    })})
+    return;
     if (this.state.selectedTag.name.length > 0) {
       this.setState({selectedTag:{name: "", color: "white"}});
       this.closeNavigator();
@@ -153,7 +169,31 @@ class App extends Component {
   }
 
 // AZ *****************************************  
+  toggleSort = (e) => {
+    const _items = Object.assign([], this.state.items);
+    const sortDescending = !this.state.sortDescending;
+    _items.sort(function(i1,i2) {
+      if (i1.name > i2.name)
+        return 1
+      if (i1.name < i2.name)
+        return -1
+      return 0;
+    });
+    if (sortDescending)
+      _items.reverse();
+    this.setState({items: _items, sortDescending:sortDescending});
+    return;    
+  }
+
   toggleAZ = (e) => {
+    this.setState({items: this.state.items.sort(function(i1,i2) {
+      if (i1.name > i2.name)
+        return 1
+      if (i1.name < i2.name)
+        return -1
+      return 0;
+    })})
+    return;    
     if (this.state.selectedLetter.length > 0) {
       this.setState({openAZ: false, selectedLetter:""});
     }
@@ -190,6 +230,17 @@ class App extends Component {
   }
 
 // Qty + Unit **************************
+
+  toggleMarked = (item,e) => {
+    console.log(e.children);
+    const items = Object.assign([], this.state.items);
+    const index = this.findItemIndexByName(this.state.selectedItem);
+    const _item = items[index];
+    _item.marked = !_item.marked;
+    items[index] = Object.assign({},_item);
+    this.setState({items:items, selectedItem:_item});//, openKeypad:true});//, () => setTimeout(() => this.ref.focus(),0));
+  }  
+
   setQty = (item,e) => {
     console.log(e.children);
     const items = Object.assign([], this.state.items);
@@ -270,6 +321,31 @@ class App extends Component {
         > {item.name}</Item>)
     }) 
 
+    const itemsByTag = this.state.items.sort(function(i1,i2) {
+      if (i1.tags > i2.tags)
+        return 1
+      if (i1.tags < i2.tags)
+        return -1
+      else {
+        if (i1.name > i2.name)
+          return 1
+        if (i1.name < i2.name)
+          return -1
+      }
+      return 0;
+    }).map((item,index) => {
+      return (
+        <Item
+          key={item.name}
+          item={item}
+          color="orange"
+          selectedItem={this.state.selectedItem}
+          deleteEvent={this.deleteItem.bind(this, item)}
+          rowClickEvent={this.handleClick.bind(this, item)}
+        > {item.name}</Item>)
+    }) 
+
+
 
     return (
       
@@ -283,16 +359,20 @@ class App extends Component {
             />
           </Menu.Item>
           </Container>
+          
           <Menu.Item position="right">
-            <Icon link style={{fontFamily:'Roboto Black'}} circular onClick={this.toggleAZ}>{this.state.selectedLetter.length > 0 ? this.state.selectedLetter : 'AZ'}</Icon>
+            <Icon link name={this.state.sortDescending ? "sort alphabet descending" : "sort alphabet ascending"} className={this.state.selectedTag.color} circular onClick={this.toggleSort}/>
           </Menu.Item>          
+          {/* <Menu.Item position="right">
+            <Icon link style={{fontFamily:'Roboto Black'}} circular onClick={this.toggleAZ}>{this.state.selectedLetter.length > 0 ? this.state.selectedLetter : 'AZ'}</Icon>
+          </Menu.Item>           */}
           <Menu.Item position="right">
             <Icon link name="grid layout" className={this.state.selectedTag.color} circular onClick={this.toggleNavigator}/>
           </Menu.Item>          
         </Menu>
         </Container>
         <Button secondary  size="huge" circular icon={this.state.done ? "arrow left":"check"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.toggleDone}/>    
-        <Table unstackable selectable={false} striped={false} singleLine fixed width={16} style={{marginTop:62, marginBottom:'100%'}}>
+        <Table inverted unstackable selectable={false} striped={false} singleLine fixed width={16} style={{marginTop:62, marginBottom:'100%'}}>
           <Table.Body>
             {items}
           </Table.Body>
@@ -309,7 +389,7 @@ class App extends Component {
               <Button color="green"  onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Leafy Greens</Button>
               <Button color="brown"  onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Potatoes and Pumpkin</Button>
               <Button color="purple" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Root Vegetables</Button>
-              <Button color="teal"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Fruit Vegetables</Button>              
+              <Button color="teal"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Fruit Vegetable</Button>              
               <Button color="pink"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Salads and Sprouts</Button>
             </Button.Group>
             <Segment basic textAlign="center" style={{position:'fixed',width:"40%", bottom:0, right:0}}>
@@ -378,22 +458,22 @@ class App extends Component {
           </Segment>
         </TransitionablePortal> */}
         <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide up', duration:300}}  closeOnDocumentClick={false} onClose={this.closeKeypad}>  
-          <Segment textAlign="center" inverted style={{ left: '0%', position: 'fixed', bottom: '0px', zIndex: 1000, width:"100%", height:"auto", borderRadius:0}}>
-            <Input style={{width:"100%", marginTop:0, marginBottom:12}} type="text" inverted defaultValue={this.state.selectedItem.name} labelPosition="right" label={
-              <Label color="green">
+          <Segment textAlign="center" inverted style={{ backgroundColor: '#3A3A3A', left: '0%', padding:0, position: 'fixed', bottom: '0px', zIndex: 5000, width:"100%", height:"auto", borderRadius:0}}>
+            <Input size="large" style={{width:"100%", marginTop:0, backgroundColor:'grey', marginBottom:7, borderRadius:"0em"}} type="text" defaultValue={this.state.selectedItem.name} labelPosition="right" label={
+              <Label color="grey" style={{borderRadius:"0em"}}>
                 {this.state.selectedItem.qty}
                 <Label.Detail>{this.state.selectedItem.unit}</Label.Detail>
               </Label>}>
             </Input>
             {/* <Header style={{margin:4}}>{this.state.selectedItem.qty + "  " + this.state.selectedItem.unit}</Header> */}
             {/* <Divider/> */}
-            <List link selection relaxed divided inverted horizontal style={{marginBottom:8}}>
-              <List.Item onClick={this.setUnit}>bags</List.Item>
-              <List.Item onClick={this.setUnit}>boxes</List.Item>
-              <List.Item onClick={this.setUnit}>trays</List.Item>
-              <List.Item onClick={this.setUnit}>tubs</List.Item>
-              <List.Item onClick={this.setUnit}>bin</List.Item>
-              <List.Item onClick={this.setUnit}>shelf</List.Item>
+            <List link selection relaxed divided inverted horizontal style={{marginBottom:7}}>
+              <List.Item style={{padding:10}} onClick={this.setUnit}>bags</List.Item>
+              <List.Item style={{padding:10}} onClick={this.setUnit}>boxes</List.Item>
+              <List.Item style={{padding:10}} onClick={this.setUnit}>trays</List.Item>
+              <List.Item style={{padding:10}} onClick={this.setUnit}>tubs</List.Item>
+              <List.Item style={{padding:10}} onClick={this.setUnit}>bin</List.Item>
+              <List.Item style={{padding:10}} onClick={this.setUnit}>shelf</List.Item>
             </List>
             <Button.Group size="big" widths="4" >
               <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>1</Button>
@@ -414,7 +494,7 @@ class App extends Component {
               <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>¾</Button>
             </Button.Group>
             <Button.Group size="big" widths="4" >
-              <Button className="ui black button" icon="exclamation" onClick={this.closeKeypad} style={{margin:0, borderRadius:"0em"}}></Button>
+              <Button className="ui black button" icon="exclamation" onClick={this.toggleMarked} style={{margin:0, borderRadius:"0em"}}></Button>
               <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>0</Button>
               <Button className="ui black button" icon="delete" onClick={this.clearQty} style={{margin:0, borderRadius:"0em"}}></Button>
               <Button className="ui black button" icon="angle down" onClick={this.closeKeypad} style={{margin:0, borderRadius:"0em"}}></Button>

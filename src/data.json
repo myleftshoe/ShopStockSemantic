@@ -4,32 +4,32 @@
     "unit": "bin",
     "qty": "1",
     "name": "AGG Kale bags"
-    ,"tags": "Prepack Salad"},
+    ,"tags": "Salad"},
     {
     "unit": "bunches",
     "qty": "1",
     "name": "AGG Roquette bags"
-    ,"tags": "Prepack Salad"},
+    ,"tags": "Salad"},
     {
     "unit": "",
     "qty": "",
     "name": "AGG Salad bags"
-    ,"tags": "Prepack Salad"},
+    ,"tags": "Salad"},
     {
     "unit": "",
     "qty": "",
     "name": "AGG Spinach bags"
-    ,"tags": "Prepack Salad"},
+    ,"tags": "Salad"},
     {
     "unit": "",
     "qty": "",
     "name": "AGG Stirfry Mix"
-    ,"tags": "Prepack Salad"},
+    ,"tags": "Salad"},
     {
     "unit": "",
     "qty": "",
     "name": "AGG Supergreens bags"
-    ,"tags": "Prepack Salad"},
+    ,"tags": "Salad"},
     {
     "unit": "",
     "qty": "",
@@ -74,12 +74,12 @@
     "unit": "",
     "qty": "",
     "name": "Artichoke"
-    ,"tags": ""},
+    ,"tags": "Peas and Beans"},
     {
     "unit": "",
     "qty": "",
     "name": "Aspargus Loose"
-    ,"tags": ""},
+    ,"tags": "Peas and Beans"},
     {
     "unit": "",
     "qty": "",
@@ -89,22 +89,22 @@
     "unit": "",
     "qty": "",
     "name": "Banana"
-    ,"tags": "Tropical Fruit"},
+    ,"tags": "Tropical Fruit and Melons"},
     {
     "unit": "",
     "qty": "",
     "name": "Beans"
-    ,"tags": ""},
+    ,"tags": "Peas and Beans"},
     {
     "unit": "",
     "qty": "",
     "name": "Beet Bunch"
-    ,"tags": "Root Veg"},
+    ,"tags": "Root Vegetable"},
     {
     "unit": "",
     "qty": "",
     "name": "Beetroot"
-    ,"tags": "Root Veg"},
+    ,"tags": "Root Vegetable"},
     {
     "unit": "",
     "qty": "",
@@ -180,12 +180,12 @@
     "unit": "",
     "qty": "",
     "name": "Celeriac"
-    ,"tags": ""},
+    ,"tags": "Stems and Roots"},
     {
     "unit": "",
     "qty": "",
     "name": "Celery"
-    ,"tags": ""},
+    ,"tags": "Leafy Greens"},
     {
     "unit": "",
     "qty": "",
@@ -205,7 +205,7 @@
     "unit": "",
     "qty": "",
     "name": "Coconut"
-    ,"tags": "Tropical Fruit"},
+    ,"tags": "Tropical Fruit and Melons"},
     {
     "unit": "",
     "qty": "",
@@ -240,7 +240,7 @@
     "unit": "",
     "qty": "",
     "name": "Corn"
-    ,"tags": ""},
+    ,"tags": "Peas and Beans"},
     {
     "unit": "",
     "qty": "",
@@ -250,17 +250,17 @@
     "unit": "",
     "qty": "",
     "name": "Daikon"
-    ,"tags": ""},
+    ,"tags": "Stems and Roots"},
     {
     "unit": "",
     "qty": "",
     "name": "Dates"
-    ,"tags": ""},
+    ,"tags": "Misc. Fruit"},
     {
     "unit": "",
     "qty": "",
     "name": "Dragonfruit"
-    ,"tags": "Tropical Fruit"},
+    ,"tags": "Tropical Fruit and Melons"},
     {
     "unit": "",
     "qty": "",
@@ -290,22 +290,22 @@
     "unit": "",
     "qty": "",
     "name": "Feijoa"
-    ,"tags": "Tropical Fruit"},
+    ,"tags": "Tropical Fruit and Melons"},
     {
     "unit": "",
     "qty": "",
     "name": "Fennel"
-    ,"tags": ""},
+    ,"tags": "Stems and Roots"},
     {
     "unit": "",
     "qty": "",
     "name": "Garlic"
-    ,"tags": ""},
+    ,"tags": "Potatoes and Onions"},
     {
     "unit": "",
     "qty": "",
     "name": "Ginger"
-    ,"tags": ""},
+    ,"tags": "Stems and Roots"},
     {
     "unit": "",
     "qty": "",
@@ -362,7 +362,7 @@
     "unit": "",
     "qty": "",
     "name": "Honeydew"
-    ,"tags": "Melon"},
+    ,"tags": "Tropical Fruit and Melons"},
     {
     "unit": "",
     "qty": "",
@@ -377,12 +377,12 @@
     "unit": "",
     "qty": "",
     "name": "Kiwi"
-    ,"tags": ""},
+    ,"tags": "Misc. Fruit"},
     {
     "unit": "",
     "qty": "",
     "name": "Leek"
-    ,"tags": ""},
+    ,"tags": "Leafy Greens"},
     {
     "unit": "",
     "qty": "",
@@ -417,7 +417,7 @@
     "unit": "",
     "qty": "",
     "name": "Mango"
-    ,"tags": "Tropical Fruit"},
+    ,"tags": "Tropical Fruit and Melons"},
     {
     "unit": "",
     "qty": "",
@@ -467,12 +467,12 @@
     "unit": "",
     "qty": "",
     "name": "Passionfruit"
-    ,"tags": "Tropical Fruit"},
+    ,"tags": "Tropical Fruit and Melons"},
     {
     "unit": "",
     "qty": "",
     "name": "Paw paw"
-    ,"tags": "Tropical Fruit"},
+    ,"tags": "Tropical Fruit and Melons"},
     {
     "unit": "",
     "qty": "",
@@ -492,12 +492,12 @@
     "unit": "",
     "qty": "",
     "name": "Persimmon"
-    ,"tags": ""},
+    ,"tags": "Misc. Fruit"},
     {
     "unit": "",
     "qty": "",
     "name": "Pineapple"
-    ,"tags": "Tropical Fruit"},
+    ,"tags": "Tropical Fruit and Melons"},
     {
     "unit": "",
     "qty": "",
@@ -507,7 +507,7 @@
     "unit": "",
     "qty": "",
     "name": "Pomegranate"
-    ,"tags": ""},
+    ,"tags": "Misc. Fruit"},
     {
     "unit": "",
     "qty": "",
@@ -557,7 +557,7 @@
     "unit": "",
     "qty": "",
     "name": "Radish"
-    ,"tags": ""},
+    ,"tags": "Stems and Roots"},
     {
     "unit": "",
     "qty": "",
@@ -572,12 +572,12 @@
     "unit": "",
     "qty": "",
     "name": "Rhubarb"
-    ,"tags": ""},
+    ,"tags": "Stems and Roots"},
     {
     "unit": "",
     "qty": "",
     "name": "Rockmelon"
-    ,"tags": "Melons"},
+    ,"tags": "Tropical Fruit and Melons"},
     {
     "unit": "",
     "qty": "",
@@ -597,7 +597,7 @@
     "unit": "",
     "qty": "",
     "name": "Spring Onion"
-    ,"tags": ""},
+    ,"tags": "Stems and Roots"},
     {
     "unit": "",
     "qty": "",
@@ -612,7 +612,7 @@
     "unit": "",
     "qty": "",
     "name": "Sprouts Salad"
-    ,"tags": ""},
+    ,"tags": "Sprouts"},
     {
     "unit": "",
     "qty": "",
@@ -627,12 +627,7 @@
     "unit": "",
     "qty": "",
     "name": "Strawberries"
-    ,"tags": "Sprouts"},
-    {
-    "unit": "",
-    "qty": "",
-    "name": "Sunflower Sprouts"
-    ,"tags": "Sprouts"},
+    ,"tags": "Berries and Grapes"},
     {
     "unit": "",
     "qty": "",
@@ -652,32 +647,32 @@
     "unit": "",
     "qty": "",
     "name": "Tomatoes"
-    ,"tags": "Fruit Vegetable"},
+    ,"tags": "Tomatoes"},
     {
     "unit": "",
     "qty": "",
     "name": "Tomatoes Cherry"
-    ,"tags": "Fruit Vegetable"},
+    ,"tags": "Tomatoes"},
     {
     "unit": "",
     "qty": "",
     "name": "Tomatoes Cherry Roma"
-    ,"tags": "Fruit Vegetable"},
+    ,"tags": "Tomatoes"},
     {
     "unit": "",
     "qty": "",
     "name": "Tomatoes Roma"
-    ,"tags": "Fruit Vegetable"},
+    ,"tags": "Tomatoes"},
     {
     "unit": "",
     "qty": "",
     "name": "Tomatoes Truss"
-    ,"tags": "Fruit Vegetable"},
+    ,"tags": "Tomatoes"},
     {
     "unit": "",
     "qty": "",
     "name": "Tumeric"
-    ,"tags": ""},
+    ,"tags": "Stems and Roots"},
     {
     "unit": "",
     "qty": "",
@@ -686,13 +681,8 @@
     {
     "unit": "",
     "qty": "",
-    "name": "Wasabi Sprouts"
-    ,"tags": "Sprouts"},
-    {
-    "unit": "",
-    "qty": "",
     "name": "Watermelon"
-    ,"tags": "Melons"},
+    ,"tags": "Tropical Fruit and Melons"},
     {
     "unit": "",
     "qty": "",
