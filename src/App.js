@@ -134,6 +134,7 @@ class App extends Component {
 
 // Navigator ************************  
   toggleNavigator = (e) => {
+    console.log("toggleNavigator:");
     this.setState({items: this.state.items.sort(function(i1,i2) {
       if (i1.tags > i2.tags)
         return 1
@@ -321,29 +322,29 @@ class App extends Component {
         > {item.name}</Item>)
     }) 
 
-    const itemsByTag = this.state.items.sort(function(i1,i2) {
-      if (i1.tags > i2.tags)
-        return 1
-      if (i1.tags < i2.tags)
-        return -1
-      else {
-        if (i1.name > i2.name)
-          return 1
-        if (i1.name < i2.name)
-          return -1
-      }
-      return 0;
-    }).map((item,index) => {
-      return (
-        <Item
-          key={item.name}
-          item={item}
-          color="orange"
-          selectedItem={this.state.selectedItem}
-          deleteEvent={this.deleteItem.bind(this, item)}
-          rowClickEvent={this.handleClick.bind(this, item)}
-        > {item.name}</Item>)
-    }) 
+    // const itemsByTag = this.state.items.sort(function(i1,i2) {
+    //   if (i1.tags > i2.tags)
+    //     return 1
+    //   if (i1.tags < i2.tags)
+    //     return -1
+    //   else {
+    //     if (i1.name > i2.name)
+    //       return 1
+    //     if (i1.name < i2.name)
+    //       return -1
+    //   }
+    //   return 0;
+    // }).map((item,index) => {
+    //   return (
+    //     <Item
+    //       key={item.name}
+    //       item={item}
+    //       color="orange"
+    //       selectedItem={this.state.selectedItem}
+    //       deleteEvent={this.deleteItem.bind(this, item)}
+    //       rowClickEvent={this.handleClick.bind(this, item)}
+    //     > {item.name}</Item>)
+    // }) 
 
 
 
