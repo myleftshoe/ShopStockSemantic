@@ -460,45 +460,49 @@ class App extends Component {
         <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide up', duration:300}}  closeOnDocumentClick={false} onClose={this.closeKeypad}>  
           <Segment textAlign="center" inverted style={{ backgroundColor: '#3A3A3A', left: '0%', padding:0, position: 'fixed', bottom: '0px', zIndex: 5000, width:"100%", height:"auto", borderRadius:0}}>
             <Input size="large" style={{width:"100%", marginTop:0, backgroundColor:'grey', marginBottom:7, borderRadius:"0em"}} type="text" defaultValue={this.state.selectedItem.name} labelPosition="right" label={
-              <Label color="grey" style={{borderRadius:"0em"}}>
+              <Label color="grey" style={{borderRadius:"0em", paddingLeft:16}}>
                 {this.state.selectedItem.qty}
                 <Label.Detail>{this.state.selectedItem.unit}</Label.Detail>
               </Label>}>
             </Input>
             {/* <Header style={{margin:4}}>{this.state.selectedItem.qty + "  " + this.state.selectedItem.unit}</Header> */}
             {/* <Divider/> */}
-            <List link selection relaxed divided inverted horizontal style={{marginBottom:7}}>
-              <List.Item style={{padding:10}} onClick={this.setUnit}>bags</List.Item>
-              <List.Item style={{padding:10}} onClick={this.setUnit}>boxes</List.Item>
-              <List.Item style={{padding:10}} onClick={this.setUnit}>trays</List.Item>
-              <List.Item style={{padding:10}} onClick={this.setUnit}>tubs</List.Item>
-              <List.Item style={{padding:10}} onClick={this.setUnit}>bin</List.Item>
-              <List.Item style={{padding:10}} onClick={this.setUnit}>shelf</List.Item>
-            </List>
-            <Button.Group size="big" widths="4" >
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>1</Button>
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>2</Button>
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>3</Button>
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>¼</Button>
-            </Button.Group>
-            <Button.Group size="big" widths="4" >
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>4</Button>
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>5</Button>
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>6</Button>
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>½</Button>
-            </Button.Group>
-            <Button.Group size="big" widths="4" >
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>7</Button>
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>8</Button>
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>9</Button>
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>¾</Button>
-            </Button.Group>
-            <Button.Group size="big" widths="4" >
-              <Button className="ui black button" icon="exclamation" onClick={this.toggleMarked} style={{margin:0, borderRadius:"0em"}}></Button>
-              <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>0</Button>
-              <Button className="ui black button" icon="delete" onClick={this.clearQty} style={{margin:0, borderRadius:"0em"}}></Button>
-              <Button className="ui black button" icon="angle down" onClick={this.closeKeypad} style={{margin:0, borderRadius:"0em"}}></Button>
-            </Button.Group>
+            <List selection divided inverted horizontal style={{marginTop:-2, marginBottom:-16}}>
+              <List.Item style={{padding:12}}/>
+              <List.Item style={{padding:12}} onClick={this.setUnit}>bags</List.Item>
+              <List.Item style={{padding:12}} onClick={this.setUnit}>boxes</List.Item>
+              <List.Item style={{padding:12}} onClick={this.setUnit}>trays</List.Item>
+              <List.Item style={{padding:12}} onClick={this.setUnit}>tubs</List.Item>
+              <List.Item style={{padding:12}} onClick={this.setUnit}>bin</List.Item>
+              <List.Item style={{padding:12}} onClick={this.setUnit}>shelf</List.Item>
+              <List.Item style={{padding:12}}/>
+            </List> 
+           <Segment inverted basic className="ui black" style={{borderRadius:0}}>
+              <Button.Group size="big" widths="4" >
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>1</Button>
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>2</Button>
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>3</Button>
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>¼</Button>
+              </Button.Group>
+              <Button.Group size="big" widths="4" >
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>4</Button>
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>5</Button>
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>6</Button>
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>½</Button>
+              </Button.Group>
+              <Button.Group size="big" widths="4" >
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>7</Button>
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>8</Button>
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>9</Button>
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>¾</Button>
+              </Button.Group>
+              <Button.Group size="big" widths="4" >
+                <Button className="ui black button" icon="exclamation" onClick={this.toggleMarked} style={{margin:0, borderRadius:"0em"}}></Button>
+                <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>0</Button>
+                <Button className="ui black button" icon="delete" onClick={this.clearQty} style={{margin:0, borderRadius:"0em"}}></Button>
+                <Button className="ui black button" icon="angle down" onClick={this.closeKeypad} style={{margin:0, borderRadius:"0em"}}></Button>
+              </Button.Group>
+            </Segment>
           </Segment>
         </TransitionablePortal>               
       </div>
