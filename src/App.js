@@ -88,6 +88,21 @@ class App extends Component {
       this.setState({searchText: e.target.value});
   }
 
+
+  changeItemName = (e) => {
+    console.log(e.target.value);
+    const items = Object.assign([], this.state.items);
+    const index = this.findItemIndexByName(this.state.selectedItem);
+    const _item = items[index];
+    _item.name = e.target.value;
+    items[index] = Object.assign({},_item);
+    this.setState({items:items, selectedItem:_item});
+  }
+
+
+
+
+
   clearSearchText = (e) => {
     console.log((this.input1));
     // this.input1.setValue("");
@@ -460,7 +475,7 @@ class App extends Component {
         </TransitionablePortal> */}
         <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide up', duration:300}}  closeOnDocumentClick={false} onClose={this.closeKeypad}>  
           <Segment textAlign="center" inverted style={{ backgroundColor: '#3A3A3A', left: '0%', padding:0, position: 'fixed', bottom: '0px', zIndex: 5000, width:"100%", height:"auto", borderRadius:0}}>
-            <Input size="large" style={{width:"100%", marginTop:0, backgroundColor:'grey', marginBottom:7, borderRadius:"0em"}} type="text" defaultValue={this.state.selectedItem.name} labelPosition="right" label={
+            <Input size="large" ref={el => this.itemNameRef = el} onChange={this.changeItemName.bind(this)} style={{width:"100%", marginTop:0, backgroundColor:'grey', marginBottom:7, borderRadius:"0em"}} type="text" defaultValue={this.state.selectedItem.name} labelPosition="right" label={
               <Label color="grey" style={{borderRadius:"0em", paddingLeft:16}}>
                 {this.state.selectedItem.qty}
                 <Label.Detail>{this.state.selectedItem.unit}</Label.Detail>
