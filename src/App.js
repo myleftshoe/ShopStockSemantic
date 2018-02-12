@@ -163,6 +163,10 @@ class App extends Component {
 
 // Navigator ************************  
   toggleNavigator = (e) => {
+    if (this.state.openNavigator) {
+      this.setState({openNavigator:false});
+      return;
+    }
     console.log("toggleNavigator:");
     this.setState({items: this.state.items.sort(function(i1,i2) {
       if (i1.tags > i2.tags)
@@ -194,7 +198,10 @@ class App extends Component {
   handleTagClick = (e, p) => {
     e.stopPropagation();
     console.log(p.children);
-    this.setState({selectedTag: {name:p.children, color:p.color}});
+    if (this.state.selectedTag.name === p.children) 
+      this.setState({selectedTag:{name: "", color: "white"}});
+    else    
+      this.setState({selectedTag: {name:p.children, color:p.color}});
   //  this.closeNavigator();    
   }
 
@@ -245,9 +252,13 @@ class App extends Component {
     if (this.state.selectedLetter.length > 0) {
       this.setState({openAZ: false, selectedLetter:""});
     }
-    else
-      this.setState({openAZ:true, openNavigator:false, openKeypad: false});
-  }
+    else {
+      if (this.state.openAZ)
+        this.setState({openAZ:false});
+      else
+        this.setState({openAZ:true, openNavigator:false, openKeypad: false});
+    }
+ }
 
   closeAZ = (e) => {
     this.setState({openAZ: false});
@@ -432,8 +443,8 @@ class App extends Component {
           {/* <Menu.Item position="right">
             <Icon link name={this.state.showMore ? "add" : "minus"} className={this.state.selectedTag.color} circular onClick={this.toggleShowMore}/>
           </Menu.Item>               */}
-          <Menu.Item position="right">
-            <Icon link name={this.state.sortDescending ? "sort alphabet descending" : "sort alphabet ascending"} className={this.state.selectedTag.color} circular onClick={this.toggleSort}/>
+          <Menu.Item position="right" >
+            <Icon link name={this.state.sortDescending ? "sort alphabet descending" : "sort alphabet ascending"}  onClick={this.toggleSort}/>
           </Menu.Item>          
           <Menu.Item position="right">
             <Icon link style={{fontFamily:'Roboto Black'}} circular onClick={this.toggleAZ}>{this.state.selectedLetter.length > 0 ? this.state.selectedLetter : 'AZ'}</Icon>
@@ -464,9 +475,9 @@ class App extends Component {
               <Button color="teal"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Fruit Vegetable</Button>              
               <Button color="pink"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Salads and Sprouts</Button>
             </Button.Group>
-            <Segment basic textAlign="center" style={{position:'fixed',width:"40%", bottom:0, right:0}}>
+            {/* <Segment basic textAlign="center" style={{position:'fixed',width:"40%", bottom:0, right:0}}>
               <Button icon="angle up" size="huge" className="ui black" onClick={this.closeNavigator}></Button>
-            </Segment>
+            </Segment> */}
           </Segment>
         </TransitionablePortal>
 
@@ -517,9 +528,9 @@ class App extends Component {
               <Button className="ui black compact" toggle active={this.state.selectedLetter==='Z'} disabled={!this.state.startingLetters.includes('Z')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Z</Button>
               <Button className="ui black compact"/>
             </Button.Group>
-            <Segment basic textAlign="center" style={{position:'fixed',width:"40%", bottom:0, right:0}}>
+            {/* <Segment basic textAlign="center" style={{position:'fixed',width:"40%", bottom:0, right:0}}>
               <Button icon="angle up" size="huge" className="ui black" onClick={this.closeAZ}></Button>
-            </Segment>
+            </Segment> */}
           </Segment>
         </TransitionablePortal>
 
@@ -549,7 +560,7 @@ class App extends Component {
                   >
                 </Dropdown>
               </Grid.Column>
-              <Grid.Column verticalAlign='middle' width={4} style={{fontSize:17, paddingLeft:0, paddingRight:28}}>
+              <Grid.Column verticalAlign='middle' width={4} style={{fontSize:17, fontWeight:'bold', paddingLeft:0, paddingRight:28}}>
                 {/* <Label horizontal float="right" pointng="left" onClick={this.openShowMorePopup} color={color(this.state.selectedItem.tags)} style={{borderRadius:"0em", paddingLeft:16, backgroundColor: color(this.state.selectedItem.tags)}}> */}
                 {this.state.selectedItem.qty + " " + this.state.selectedItem.unit}
                 {/* <Label.Detail>{this.state.selectedItem.unit}</Label.Detail> */}
