@@ -177,7 +177,7 @@ class App extends Component {
       }
       return 0;
     })})
-    return;
+    // return;
     if (this.state.selectedTag.name.length > 0) {
       this.setState({selectedTag:{name: "", color: "white"}});
       this.closeNavigator();
@@ -241,7 +241,7 @@ class App extends Component {
         return -1
       return 0;
     })})
-    return;    
+//    return;    
     if (this.state.selectedLetter.length > 0) {
       this.setState({openAZ: false, selectedLetter:""});
     }
@@ -333,7 +333,7 @@ class App extends Component {
 
   render() {
     const items = this.state.items.filter((item, index) => {
-      console.log(this.state.selectedItem.tags);
+//      console.log(this.state.selectedItem.tags);
       if (this.state.selectedLetter.length > 0) {
         if (item.name.charAt(0).toUpperCase() === this.state.selectedLetter.toUpperCase())
           return true;
@@ -424,7 +424,7 @@ class App extends Component {
         <Menu size="huge" className="ui fixed compact inverted" style={{height:62}}>
         <Container>
           <Menu.Item>
-            <Input type="text" icon="search" iconPosition="left" inverted transparent id="my-text-field" style={{color:'white',width:180}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}
+            <Input type="text" icon="search" iconPosition="left" inverted transparent id="searchInput" style={{color:'white',width:100}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}
               onClose={this.clearSearchText}
             />
           </Menu.Item>
@@ -435,9 +435,9 @@ class App extends Component {
           <Menu.Item position="right">
             <Icon link name={this.state.sortDescending ? "sort alphabet descending" : "sort alphabet ascending"} className={this.state.selectedTag.color} circular onClick={this.toggleSort}/>
           </Menu.Item>          
-          {/* <Menu.Item position="right">
+          <Menu.Item position="right">
             <Icon link style={{fontFamily:'Roboto Black'}} circular onClick={this.toggleAZ}>{this.state.selectedLetter.length > 0 ? this.state.selectedLetter : 'AZ'}</Icon>
-          </Menu.Item>           */}
+          </Menu.Item>          
           <Menu.Item position="right">
             <Icon link name="grid layout" className={this.state.selectedTag.color} circular onClick={this.toggleNavigator}/>
           </Menu.Item>          
@@ -549,7 +549,7 @@ class App extends Component {
                   >
                 </Dropdown>
               </Grid.Column>
-              <Grid.Column verticalAlign='middle' width={4} style={{paddingRight:28}}>
+              <Grid.Column verticalAlign='middle' width={4} style={{fontSize:17, paddingLeft:0, paddingRight:28}}>
                 {/* <Label horizontal float="right" pointng="left" onClick={this.openShowMorePopup} color={color(this.state.selectedItem.tags)} style={{borderRadius:"0em", paddingLeft:16, backgroundColor: color(this.state.selectedItem.tags)}}> */}
                 {this.state.selectedItem.qty + " " + this.state.selectedItem.unit}
                 {/* <Label.Detail>{this.state.selectedItem.unit}</Label.Detail> */}
