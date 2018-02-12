@@ -24,6 +24,7 @@ import {
 } from 'semantic-ui-react';
 import TransitionGroup from 'semantic-ui-react/dist/commonjs/modules/Transition/TransitionGroup';
 import Item from "./components/item";
+import color from './colors'
 
 //const FETCHURL = "https://api.jsonbin.io/b/5a6a9226814505706ad40ea9";
 const FETCHURL = "https://api.jsonbin.io/b/5a7cfa997ecc101273331408";
@@ -43,6 +44,7 @@ class App extends Component {
     openNavigator:false,
     openAZ:false,
     sortDescending:false,
+    showMore:false,
     startingLetters: []
   }
 
@@ -92,7 +94,7 @@ class App extends Component {
   changeItemName = (e) => {
     console.log(e.target.value);
     const items = Object.assign([], this.state.items);
-    const index = this.findItemIndexByName(this.state.selectedItem);
+    const index = this.findItemIndexByName(this.state.selectedItem.name);
     const _item = items[index];
     _item.name = e.target.value;
     items[index] = Object.assign({},_item);
@@ -120,17 +122,29 @@ class App extends Component {
   handleRef = component => (this.ref = component);
   handleClick = (item,e) => {
     console.log("row clicked" + item.name);
-    if (this.state.openKeypad)
+    this.setState({selectedItem:item})
+    if (this.state.openKeypad && !this.state.showMore)
       this.closeKeypad();
     else {
-      // Without setTimeout the modal has not rendered when focus() is called. 
-      // setTimeouts() are executed last in the function all stack so 0 delay works!
+//      Without setTimeout the modal has not rendered when focus() is called. 
+//      setTimeouts() are executed last in the function all stack so 0 delay works!
       this.setState({selectedItem:item});//, () => setTimeout(() => this.ref.focus(),0));
       this.openKeypad();
     }
   }
 
-  
+  selectItem = (item,e) => {
+    console.log("selectItem:" + e.value);    
+    const index = this.findItemIndexByName(e.value);
+    console.log(index);
+    const _item = this.state.items[index];
+    this.setState({selectedItem:_item});
+  }
+
+  openShowMorePopup = () => {
+    this.setState({showMore:true})
+  }
+
   sendClicked = (e) => {
     this.setState({openDoneModal: !this.state.openDoneModal});//, () => setTimeout(() => this.ref.focus(),0));
   }
@@ -185,6 +199,24 @@ class App extends Component {
   }
 
 // AZ *****************************************  
+
+  toggleShowMore = (e) => {
+    const _items = Object.assign([], this.state.items);
+    const showMore = !this.state.showMore;
+    // _items.sort(function(i1,i2) {
+    //   if (i1.name > i2.name)
+    //     return 1
+    //   if (i1.name < i2.name)
+    //     return -1
+    //   return 0;
+    // });
+    // if (sortDescending)
+    //   _items.reverse();
+    // this.setState({items: _items, sortDescending:sortDescending});
+      this.setState({showMore:showMore});
+    return;    
+  }
+
   toggleSort = (e) => {
     const _items = Object.assign([], this.state.items);
     const sortDescending = !this.state.sortDescending;
@@ -250,7 +282,7 @@ class App extends Component {
   toggleMarked = (item,e) => {
     console.log(e.children);
     const items = Object.assign([], this.state.items);
-    const index = this.findItemIndexByName(this.state.selectedItem);
+    const index = this.findItemIndexByName(this.state.selectedItem.name);
     const _item = items[index];
     _item.marked = !_item.marked;
     items[index] = Object.assign({},_item);
@@ -260,7 +292,7 @@ class App extends Component {
   setQty = (item,e) => {
     console.log(e.children);
     const items = Object.assign([], this.state.items);
-    const index = this.findItemIndexByName(this.state.selectedItem);
+    const index = this.findItemIndexByName(this.state.selectedItem.name);
     const _item = items[index];
     if (_item.qty.length > 1)
       _item.qty="";
@@ -271,7 +303,7 @@ class App extends Component {
 
   clearQty = (e) => {
     const items = Object.assign([], this.state.items);
-    const index = this.findItemIndexByName(this.state.selectedItem);
+    const index = this.findItemIndexByName(this.state.selectedItem.name);
     const _item = items[index];
     _item.qty = "";
     _item.unit = "";
@@ -281,7 +313,7 @@ class App extends Component {
 
   setUnit = (item,e) => {
     const items = Object.assign([], this.state.items);
-    const index = this.findItemIndexByName(this.state.selectedItem);
+    const index = this.findItemIndexByName(this.state.selectedItem.name);
     const _item = items[index];
     _item.unit = e.children;
     items[index] = Object.assign({},_item);
@@ -289,9 +321,9 @@ class App extends Component {
     setTimeout(() => this.setState({openKeypad:false}),600);
   }
 
-  findItemIndexByName = (item) => {
+  findItemIndexByName = (itemName) => {
     for (let i = 0; i < this.state.items.length; i++) {
-      if (this.state.items[i].name === item.name) 
+      if (this.state.items[i].name === itemName) 
         return i;
     }
     return -1;
@@ -301,6 +333,7 @@ class App extends Component {
 
   render() {
     const items = this.state.items.filter((item, index) => {
+      console.log(this.state.selectedItem.tags);
       if (this.state.selectedLetter.length > 0) {
         if (item.name.charAt(0).toUpperCase() === this.state.selectedLetter.toUpperCase())
           return true;
@@ -314,10 +347,14 @@ class App extends Component {
           return false;
       }
       if (this.state.done) {
-        if (item.qty || item.unit)
+        if (this.state.showMore && this.state.selectedItem.tags === item.tags) 
           return true;
-        else
-          return false;
+        else {
+          if (item.qty || item.unit)
+            return true;
+          else
+            return false;
+        }
       }
       if (this.state.searchText.length > 0) {
         if (item.name.toUpperCase().includes(this.state.searchText.toUpperCase()))
@@ -336,6 +373,23 @@ class App extends Component {
           rowClickEvent={this.handleClick.bind(this, item)}
         > {item.name}</Item>)
     }) 
+
+    const relatedItems = this.state.items.filter((item, index) => {
+      if (this.state.selectedItem.tags === item.tags) 
+        return true;
+      else  
+        return false;
+    }).map((item,index) => {
+      return (
+        <Item
+          key={item.name}
+          item={item}
+          selectedItem={this.state.selectedItem}
+          deleteEvent={this.deleteItem.bind(this, item)}
+          rowClickEvent={this.handleClick.bind(this, item)}
+        > {item.name}</Item>)
+    }) 
+
 
     // const itemsByTag = this.state.items.sort(function(i1,i2) {
     //   if (i1.tags > i2.tags)
@@ -375,7 +429,9 @@ class App extends Component {
             />
           </Menu.Item>
           </Container>
-          
+          {/* <Menu.Item position="right">
+            <Icon link name={this.state.showMore ? "add" : "minus"} className={this.state.selectedTag.color} circular onClick={this.toggleShowMore}/>
+          </Menu.Item>               */}
           <Menu.Item position="right">
             <Icon link name={this.state.sortDescending ? "sort alphabet descending" : "sort alphabet ascending"} className={this.state.selectedTag.color} circular onClick={this.toggleSort}/>
           </Menu.Item>          
@@ -475,15 +531,36 @@ class App extends Component {
         </TransitionablePortal> */}
         <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide up', duration:300}}  closeOnDocumentClick={false} onClose={this.closeKeypad}>  
           <Segment textAlign="center" inverted style={{ backgroundColor: '#3A3A3A', left: '0%', padding:0, position: 'fixed', bottom: '0px', zIndex: 5000, width:"100%", height:"auto", borderRadius:0}}>
-            <Input size="large" ref={el => this.itemNameRef = el} onChange={this.changeItemName.bind(this)} style={{width:"100%", marginTop:0, backgroundColor:'grey', marginBottom:7, borderRadius:"0em"}} type="text" defaultValue={this.state.selectedItem.name} labelPosition="right" label={
-              <Label color="grey" style={{borderRadius:"0em", paddingLeft:16}}>
-                {this.state.selectedItem.qty}
-                <Label.Detail>{this.state.selectedItem.unit}</Label.Detail>
-              </Label>}>
-            </Input>
+            <Segment  style={{borderRadius:0, padding:0}} >
+            <Grid widths={16} >
+              <Grid.Column width={12}>
+                <Dropdown onChange={this.selectItem}
+                  floating  button className='icon'  fluid   scrolling   style={{borderRadius:0, padding:14}} defaultValue={this.state.selectedItem.name}
+                    options={ 
+                      this.state.items.filter((item, index) => {
+                        if (this.state.selectedItem.tags === item.tags) 
+                          return true;
+                        else  
+                          return false;
+                      }).map(function(i, index) {
+                        return {value: i.name, text:i.name}
+                      })
+                    }
+                  >
+                </Dropdown>
+              </Grid.Column>
+              <Grid.Column verticalAlign='middle' width={4} style={{paddingRight:28}}>
+                {/* <Label horizontal float="right" pointng="left" onClick={this.openShowMorePopup} color={color(this.state.selectedItem.tags)} style={{borderRadius:"0em", paddingLeft:16, backgroundColor: color(this.state.selectedItem.tags)}}> */}
+                {this.state.selectedItem.qty + " " + this.state.selectedItem.unit}
+                {/* <Label.Detail>{this.state.selectedItem.unit}</Label.Detail> */}
+              {/* </Label> */}
+              </Grid.Column>
+            </Grid>
+
+            </Segment>
             {/* <Header style={{margin:4}}>{this.state.selectedItem.qty + "  " + this.state.selectedItem.unit}</Header> */}
             {/* <Divider/> */}
-            <List selection divided inverted horizontal style={{marginTop:-2, marginBottom:-16}}>
+            <List selection divided inverted horizontal style={{marginTop:-18, marginBottom:-16}}>
               <List.Item style={{padding:12}}/>
               <List.Item style={{padding:12}} onClick={this.setUnit}>bags</List.Item>
               <List.Item style={{padding:12}} onClick={this.setUnit}>boxes</List.Item>
