@@ -26,7 +26,7 @@ import TransitionGroup from 'semantic-ui-react/dist/commonjs/modules/Transition/
 import Item from "./components/item";
 import color from './colors'
 
-//const FETCHURL = "https://api.jsonbin.io/b/5a6a9226814505706ad40ea9";
+const POSTURL = "https://api.jsonbin.io/b/5a6a9226814505706ad40ea9";
 const FETCHURL = "https://api.jsonbin.io/b/5a7cfa997ecc101273331408";
 
 class App extends Component {
@@ -53,6 +53,31 @@ class App extends Component {
         .then(response => response.json())
         .then(data => this.setState({items:data.Items}));
   }
+
+
+sendData = () => {
+  this.postData(POSTURL, this.state.items.filter(function(item) {
+    if (item.qty || item.unit)
+      return true;
+    else
+      return false;
+  }))
+  .then(data => console.log(data)) // JSON from `response.json()` call
+  .catch(error => console.error(error))
+}
+
+
+postData(url, data) {
+  return fetch(url, {
+    body: JSON.stringify(data), // must match 'Content-Type' header
+    headers: {
+      'content-type': 'application/json'
+    },
+    method: 'PUT',
+  })
+  .then(response => response.json()) // parses response to JSON
+}
+
 
   deleteItem = (item, e) => {
     const items = Object.assign([], this.state.items);
@@ -454,6 +479,7 @@ class App extends Component {
           </Menu.Item>          
         </Menu>
         </Container>
+        <Button secondary  size="huge" circular icon="send" style={{position: 'fixed', bottom:128, right:32, display:'block', zIndex:700  }} onClick={this.sendData}/>    
         <Button secondary  size="huge" circular icon={this.state.done ? "arrow left":"check"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.toggleDone}/>    
         <Table inverted unstackable selectable={false} striped={false} singleLine fixed width={16} style={{marginTop:62, marginBottom:'100%'}}>
           <Table.Body>
