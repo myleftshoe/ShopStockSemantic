@@ -9,7 +9,7 @@ import {
   Input,
   Divider,
   Image,
-  Label,  
+  Label,
   Form,
   Rail,
   Search,
@@ -23,11 +23,12 @@ import {
   TransitionablePortal
 } from 'semantic-ui-react';
 import TransitionGroup from 'semantic-ui-react/dist/commonjs/modules/Transition/TransitionGroup';
-import Item from "./components/item";
+import Item from "./components/Item";
 import color from './colors'
 
-const POSTURL = "https://api.jsonbin.io/b/5a6a9226814505706ad40ea9";
-const FETCHURL = "https://api.jsonbin.io/b/5a7cfa997ecc101273331408";
+const POSTURL = "https://api.jsonbin.io/b/5a84f744849a8f1c811922ad";
+// const FETCHURL = "https://api.jsonbin.io/b/5a7cfa997ecc101273331408";
+const FETCHURL = "https://api.jsonbin.io/b/5a84f744849a8f1c811922ad/latest";
 
 class App extends Component {
 
@@ -35,7 +36,7 @@ class App extends Component {
     searchText: "",
     items: [{name:"", qty:"", unit:"", tags:""}],
     openKeypad: false,
-    done: false,
+    done: true,
     marked:false,
     selectedItem:{name:"", qty:0, unit:"", tags:""},
     selectedLetter: "",
@@ -45,25 +46,46 @@ class App extends Component {
     openAZ:false,
     sortDescending:false,
     showMore:false,
-    startingLetters: []
+    sortByTimestamp: true,
+    saved:false,
+    changed:false,
+    status:"",
+    startingLetters: [],
+    sortMode:"None",
+    revered:false
   }
 
   componentDidMount() {
     fetch(FETCHURL)
         .then(response => response.json())
-        .then(data => this.setState({items:data.Items}));
+        .then(data => {
+          this.fetchedItems = data.Items;
+          this.setState({items:data.Items})}
+        );
   }
 
+fetchedItems = {};
+
+changed = () => JSON.stringify(this.fetchedItems) === JSON.stringify(this.state.items);
 
 sendData = () => {
-  this.postData(POSTURL, this.state.items.filter(function(item) {
-    if (item.qty || item.unit)
-      return true;
-    else
-      return false;
-  }))
-  .then(data => console.log(data)) // JSON from `response.json()` call
-  .catch(error => console.error(error))
+  this.setState({status:"saving"})
+  this.postData(POSTURL, {Date: (new Date()).toJSON(), Items: this.state.items})
+  .then(data => {
+    console.log(data);
+    if (!data.success)
+      throw "Save failed";
+    this.fetchedItems = data.data.Items;
+    console.log(this.changed());
+    this.setState({saved:true, changed:false, status:"saved"})
+    setTimeout(() => {
+      this.setState({ saved: false, status:"" })
+    }, 500)
+  }) // JSON from `response.json()` call
+  .catch(error => {
+    this.setState({ saved: false, status:"error" })
+    console.error(error)
+  })
 }
 
 
@@ -94,6 +116,16 @@ postData(url, data) {
       this.setState({items:items});
     }
   }
+
+handleButtonPress = (e) => {
+    this.buttonPressTimer = setTimeout(() => alert('long press activated'), 1500);
+}
+
+handleButtonRelease = (e) => {
+    clearTimeout(this.buttonPressTimer);
+}
+
+
 
 // Search ************************************
 
@@ -131,13 +163,15 @@ postData(url, data) {
 
 
   clearSearchText = (e) => {
-    console.log((this.input1));
+    e.target.value = "";
+    // this.value = "";
+    console.log("dsdsd",this.input1.value);
     // this.input1.setValue("");
     this.input1.value = "";
     this.setState({searchText: ""});
   }
 
-// Done ****************************  
+// Done ****************************
   toggleDone = (e) => {
     this.setState({done: !this.state.done});//, () => setTimeout(() => this.ref.focus(),0));
   }
@@ -146,20 +180,26 @@ postData(url, data) {
 
   handleRef = component => (this.ref = component);
   handleClick = (item,e) => {
+    console.log (document.activeElement);
+    console.log(this.input1.inputRef);
+    console.log(this.input1.inputRef === document.activeElement);
+    if (this.input1.inputRef === document.activeElement)
+      return;
     console.log("row clicked" + item.name);
     this.setState({selectedItem:item})
-    if (this.state.openKeypad && !this.state.showMore)
-      this.closeKeypad();
-    else {
-//      Without setTimeout the modal has not rendered when focus() is called. 
+
+    // if (this.state.openKeypad && !this.state.showMore)
+    //   this.closeKeypad();
+    // else {
+//      Without setTimeout the modal has not rendered when focus() is called.
 //      setTimeouts() are executed last in the function all stack so 0 delay works!
       this.setState({selectedItem:item});//, () => setTimeout(() => this.ref.focus(),0));
       this.openKeypad();
-    }
+    // }
   }
 
   selectItem = (item,e) => {
-    console.log("selectItem:" + e.value);    
+    console.log("selectItem:" + e.value);
     const index = this.findItemIndexByName(e.value);
     console.log(index);
     const _item = this.state.items[index];
@@ -186,7 +226,7 @@ postData(url, data) {
     }
   }
 
-// Navigator ************************  
+// Navigator ************************
   toggleNavigator = (e) => {
     if (this.state.openNavigator) {
       this.setState({openNavigator:false});
@@ -206,7 +246,7 @@ postData(url, data) {
       }
       return 0;
     })})
-    // return;
+    return;
     if (this.state.selectedTag.name.length > 0) {
       this.setState({selectedTag:{name: "", color: "white"}});
       this.closeNavigator();
@@ -223,14 +263,14 @@ postData(url, data) {
   handleTagClick = (e, p) => {
     e.stopPropagation();
     console.log(p.children);
-    if (this.state.selectedTag.name === p.children) 
+    if (this.state.selectedTag.name === p.children)
       this.setState({selectedTag:{name: "", color: "white"}});
-    else    
+    else
       this.setState({selectedTag: {name:p.children, color:p.color}});
-  //  this.closeNavigator();    
+  //  this.closeNavigator();
   }
 
-// AZ *****************************************  
+// AZ *****************************************
 
   toggleShowMore = (e) => {
     const _items = Object.assign([], this.state.items);
@@ -246,8 +286,28 @@ postData(url, data) {
     //   _items.reverse();
     // this.setState({items: _items, sortDescending:sortDescending});
       this.setState({showMore:showMore});
-    return;    
+    return;
   }
+
+  toggleSortByTimestamp = (e) => {
+    const _items = Object.assign([], this.state.items);
+    const sortByTimestamp = !this.state.sortByTimestamp;
+    console.log(sortByTimestamp);
+    _items.sort(function(i1,i2) {
+      let d1 = new Date(i1.timestamp);
+      let d2 = new Date(i2.timestamp);
+      if (d1 > d2)
+        return 1
+      if (d1 < d2)
+        return -1
+      return 0;
+    });
+    if (sortByTimestamp)
+      _items.reverse();
+    this.setState({items: _items, sortByTimestamp:sortByTimestamp});
+    return;
+  }
+
 
   toggleSort = (e) => {
     const _items = Object.assign([], this.state.items);
@@ -262,7 +322,7 @@ postData(url, data) {
     if (sortDescending)
       _items.reverse();
     this.setState({items: _items, sortDescending:sortDescending});
-    return;    
+    return;
   }
 
   toggleAZ = (e) => {
@@ -273,7 +333,7 @@ postData(url, data) {
         return -1
       return 0;
     })})
-//    return;    
+//    return;
     if (this.state.selectedLetter.length > 0) {
       this.setState({openAZ: false, selectedLetter:""});
     }
@@ -323,7 +383,7 @@ postData(url, data) {
     _item.marked = !_item.marked;
     items[index] = Object.assign({},_item);
     this.setState({items:items, selectedItem:_item});//, openKeypad:true});//, () => setTimeout(() => this.ref.focus(),0));
-  }  
+  }
 
   setQty = (item,e) => {
     console.log(e.children);
@@ -333,8 +393,11 @@ postData(url, data) {
     if (_item.qty.length > 1)
       _item.qty="";
     _item.qty = _item.qty + e.children;
+    _item.timestamp = (new Date()).toJSON();
     items[index] = Object.assign({},_item);
-    this.setState({items:items, selectedItem:_item});//, openKeypad:true});//, () => setTimeout(() => this.ref.focus(),0));
+    this.setState({items:items, selectedItem:_item, searchText:"", changed:true});//, openKeypad:true});//, () => setTimeout(() => this.ref.focus(),0));
+    this.input1.value="";
+
   }
 
   clearQty = (e) => {
@@ -352,52 +415,141 @@ postData(url, data) {
     const index = this.findItemIndexByName(this.state.selectedItem.name);
     const _item = items[index];
     _item.unit = e.children;
+    _item.timestamp = (new Date()).toJSON();
     items[index] = Object.assign({},_item);
     this.setState({items:items, selectedItem:_item});
-    setTimeout(() => this.setState({openKeypad:false}),600);
+//    setTimeout(() => this.setState({openKeypad:false}),600);
   }
 
   findItemIndexByName = (itemName) => {
     for (let i = 0; i < this.state.items.length; i++) {
-      if (this.state.items[i].name === itemName) 
+      if (this.state.items[i].name === itemName)
         return i;
     }
     return -1;
   }
-  
-  // Render ************************  
 
+
+  onFocusSearch = (e) => {
+    console.log("onFocusSearch");
+    this.setState({searchText:""});
+    this.input1.value = "";
+  }
+
+  statusToColor = () => {
+    let ret = "black";
+    switch (this.state.status) {
+      case "saving" :
+        ret = "black";
+        break;
+      case "saved" :
+        ret = "green";
+        break;
+      case "error" :
+        ret = "red";
+        break;
+      default :
+        ret = "black";
+    }
+    console.log(ret);
+    return ret;
+  }
+
+
+  focusSearch = () => {
+    console.log (document.activeElement);
+    console.log(this.input1.inputRef);
+    console.log(this.input1.inputRef === document.activeElement);
+  }
+
+  handleSortClick = (e) => {
+    console.log("handleSortClick: ", e.target.innerHTML);
+    let sortMode = e.target.innerHTML;
+    let reverse = false;
+    if (sortMode === "Reverse") {
+      sortMode = this.state.sortMode;
+      reverse = true;
+    }
+    const _items = Object.assign([], this.state.items);
+
+    if (sortMode === 'Alphabetical')
+      _items.sort(function(i1,i2) {
+        if (i1.name > i2.name)
+          return 1
+        if (i1.name < i2.name)
+          return -1
+        return 0;
+      });
+    if (sortMode === 'Grouped')
+      _items.sort(function(i1,i2) {
+        if (i1.tags > i2.tags)
+          return 1
+        if (i1.tags < i2.tags)
+          return -1
+        else {
+          if (i1.name > i2.name)
+            return 1
+          if (i1.name < i2.name)
+            return -1
+        }
+        return 0;
+      });
+    if (sortMode === 'None')
+      _items.sort(function(i1,i2) {
+        let d1 = new Date(i1.timestamp);
+        let d2 = new Date(i2.timestamp);
+        if (d1 > d2)
+          return 1
+        if (d1 < d2)
+          return -1
+        return 0;
+      });
+
+    if (reverse) 
+      _items.reverse();
+    
+    this.setState({items:_items, sortMode: sortMode});
+  }
+
+
+  // Render ************************
   render() {
     const items = this.state.items.filter((item, index) => {
 //      console.log(this.state.selectedItem.tags);
-      if (this.state.selectedLetter.length > 0) {
-        if (item.name.charAt(0).toUpperCase() === this.state.selectedLetter.toUpperCase())
+      // if (this.state.selectedLetter.length > 0) {
+      //   if (item.name.charAt(0).toUpperCase() === this.state.selectedLetter.toUpperCase())
+      //     return true;
+      //   else
+      //     return false;
+      // }
+      // if (this.state.selectedTag.name.length > 0) {
+      //   if (item.tags.includes(this.state.selectedTag.name))
+      //     return true;
+      //   else
+      //     return false;
+      // }
+      if (this.state.searchText.length === 1) {
+        if (item.name.charAt(0).toUpperCase() === this.state.searchText.charAt(0).toUpperCase())
           return true;
         else
           return false;
       }
-      if (this.state.selectedTag.name.length > 0) {
-        if (item.tags.includes(this.state.selectedTag.name))
-          return true;
-        else
-          return false;
-      }
-      if (this.state.done) {
-        if (this.state.showMore && this.state.selectedItem.tags === item.tags) 
-          return true;
-        else {
-          if (item.qty || item.unit)
-            return true;
-          else
-            return false;
-        }
-      }
-      if (this.state.searchText.length > 0) {
+      if (this.state.searchText.length > 1) {
         if (item.name.toUpperCase().includes(this.state.searchText.toUpperCase()))
           return true;
         else
           return false;
       }
+      // if (this.state.done) {
+      //   if (this.state.showMore && this.state.selectedItem.tags === item.tags)
+      //     return true;
+      //   else {
+          if (item.qty || item.unit)
+            return true;
+          else
+            return false;
+
+
       return true;
     }).map((item,index) => {
       return (
@@ -407,13 +559,17 @@ postData(url, data) {
           selectedItem={this.state.selectedItem}
           deleteEvent={this.deleteItem.bind(this, item)}
           rowClickEvent={this.handleClick.bind(this, item)}
+          // handleButtonPress={this.handleButtonPress.bind(this, item)}
+          // handleButtonRelease={this.handleButtonRelease.bind(this, item)}
+          // handleButtonPress={this.handleButtonPress.bind(this, item)}
+          // handleButtonRelease={this.handleButtonRelease.bind(this, item)}
         > {item.name}</Item>)
-    }) 
+    })
 
     const relatedItems = this.state.items.filter((item, index) => {
-      if (this.state.selectedItem.tags === item.tags) 
+      if (this.state.selectedItem.tags === item.tags)
         return true;
-      else  
+      else
         return false;
     }).map((item,index) => {
       return (
@@ -424,7 +580,7 @@ postData(url, data) {
           deleteEvent={this.deleteItem.bind(this, item)}
           rowClickEvent={this.handleClick.bind(this, item)}
         > {item.name}</Item>)
-    }) 
+    })
 
 
     // const itemsByTag = this.state.items.sort(function(i1,i2) {
@@ -449,46 +605,67 @@ postData(url, data) {
     //       deleteEvent={this.deleteItem.bind(this, item)}
     //       rowClickEvent={this.handleClick.bind(this, item)}
     //     > {item.name}</Item>)
-    // }) 
-
-
+    // })
 
     return (
-      
+
+
+
       <div>
-        <Container>
-        <Menu size="huge" className="ui fixed compact inverted" style={{height:62}}>
-        <Container>
-          <Menu.Item>
-            <Input type="text" icon="search" iconPosition="left" inverted transparent id="searchInput" style={{color:'white',width:100}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}
-              onClose={this.clearSearchText}
+        <Menu size="huge" widths={16} className="ui fixed compact inverted" style={{height:62}}>
+        {/* <Container> */}
+          {/* <Menu.Item onClick={() => this.input1.focus()}> */}
+          <Menu.Item onClick={this.focusSearch}>
+            <Input type="text" icon="search" iconPosition="left" onBlur={console.log("onblur")} onFocus={this.clearSearchText} inverted transparent id="searchInput" style={{color:'white',width:'auto'}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}
+              onClose={this.clearSearchText} value={this.state.searchText}
             />
           </Menu.Item>
-          </Container>
+          {/* </Container> */}
+          {/* <Menu.Item position="right" onClick={this.toggleAZ}>
+            <Icon link style={{fontFamily:'Roboto Black'}} circular>{this.state.selectedLetter.length > 0 ? this.state.selectedLetter : 'AZ'}</Icon>
+          </Menu.Item>           */}
+
           {/* <Menu.Item position="right">
             <Icon link name={this.state.showMore ? "add" : "minus"} className={this.state.selectedTag.color} circular onClick={this.toggleShowMore}/>
           </Menu.Item>               */}
-          <Menu.Item position="right" >
-            <Icon link name={this.state.sortDescending ? "sort alphabet descending" : "sort alphabet ascending"}  onClick={this.toggleSort}/>
-          </Menu.Item>          
-          <Menu.Item position="right">
-            <Icon link style={{fontFamily:'Roboto Black'}} circular onClick={this.toggleAZ}>{this.state.selectedLetter.length > 0 ? this.state.selectedLetter : 'AZ'}</Icon>
-          </Menu.Item>          
-          <Menu.Item position="right">
-            <Icon link name="grid layout" className={this.state.selectedTag.color} circular onClick={this.toggleNavigator}/>
-          </Menu.Item>          
+          {/* <Menu.Item position="right" onClick={this.toggleSortByTimestamp}>
+            <Icon link name={this.state.sortByTimestamp ? "sort numeric ascending" : "sort numeric descending"} circular/>
+          </Menu.Item>
+          <Menu.Item position="right" onClick={this.sendData}>
+            <Icon link name="send" circular/>
+          </Menu.Item>           */}
+          {/* <Menu.Item position="right" onClick={this.toggleSort}>
+            <Icon link name={this.state.sortDescending ? "sort alphabet descending" : "sort alphabet ascending"}/>
+        </Menu.Item> */}
+          {/* <Menu.Item position="right" onClick={this.toggleNavigator}>
+            <Icon link name="grid layout" className={this.state.selectedTag.color} circular/>
+          </Menu.Item> */}
+          <Menu.Item position="right"  style={{width:72, position:'fixed', top:0, right:0}}>
+            <Popup position="bottom right" header="Sort" 
+              trigger={<Icon link name="sort" style={{backgroundColor:this.state.sortMode==='None'?null:"gray"}} circular/>}
+              content={
+                <Menu secondary vertical>
+                  <Menu.Item name='Alphabetical' active={this.state.sortMode === 'Alphabetical'} onClick={this.handleSortClick.bind(this)} />
+                  <Menu.Item name='Grouped' active={this.state.sortMode === 'Grouped'} onClick={this.handleSortClick} />
+                  <Menu.Item name='None' active={this.state.sortMode === 'None'} onClick={this.handleSortClick} />
+                  <Divider/>
+                  <Menu.Item name='Reverse' active={this.state.sortMode === 'None'} onClick={this.handleSortClick} />
+                </Menu>
+              }
+            >
+            </Popup>
+          </Menu.Item>
         </Menu>
-        </Container>
-        <Button secondary  size="huge" circular icon="send" style={{position: 'fixed', bottom:128, right:32, display:'block', zIndex:700  }} onClick={this.sendData}/>    
-        <Button secondary  size="huge" circular icon={this.state.done ? "arrow left":"check"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.toggleDone}/>    
+        <Button color={this.statusToColor()} size="huge" circular icon={this.state.changed?"save":"send"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.sendData}/>
+        {/* <Button secondary  size="huge" circular icon={this.state.done ? "add":"check"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.toggleDone}/>     */}
         <Table inverted unstackable selectable={false} striped={false} singleLine fixed width={16} style={{marginTop:62, marginBottom:'100%'}}>
           <Table.Body>
             {items}
           </Table.Body>
         </Table>
-
-        <TransitionablePortal open={this.state.openNavigator} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={false}  onClose={this.closeNavigator}>  
-          <Segment size="massive" raised floated="right" inverted style={{ borderRadius:"0em", right: '0%', margin:0, padding:0, paddingLeft:1, position: 'fixed', top: '62px', zIndex: 1000, width:"40%", height:"100%",borderRadius:"0em" }} textAlign="center" >
+        {/* <Popup basic inverted  open={this.state.saved} style={{position:'fixed', width:'50%', top:'25%', left:'25%'}}><Container textAlign="center">Saved!</Container></Popup> */}
+        <TransitionablePortal open={this.state.openNavigator} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={false}  onClose={this.closeNavigator}>
+          <Segment size="massive" raised floated="right" inverted style={{ right: '0%', margin:0, padding:0, paddingLeft:1, position: 'fixed', top: '62px', zIndex: 1000, width:"40%", height:"100%",borderRadius:"0em" }} textAlign="center" >
             <Button.Group vertical compact>
               <Button color="orange" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Citrus</Button>
               <Button color="yellow" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Tropical Fruit and Melons</Button>
@@ -498,7 +675,7 @@ postData(url, data) {
               <Button color="green"  onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Leafy Greens</Button>
               <Button color="brown"  onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Potatoes and Pumpkin</Button>
               <Button color="purple" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Root Vegetables</Button>
-              <Button color="teal"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Fruit Vegetable</Button>              
+              <Button color="teal"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Fruit Vegetable</Button>
               <Button color="pink"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Salads and Sprouts</Button>
             </Button.Group>
             {/* <Segment basic textAlign="center" style={{position:'fixed',width:"40%", bottom:0, right:0}}>
@@ -507,7 +684,7 @@ postData(url, data) {
           </Segment>
         </TransitionablePortal>
 
-        <TransitionablePortal open={this.state.openAZ} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={false}  onClose={this.closeAZ} onOpen={this.onOpenAZ} >  
+        <TransitionablePortal open={this.state.openAZ} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={false}  onClose={this.closeAZ} onOpen={this.onOpenAZ} >
           <Segment basic raised floated="right" inverted  style={{right: '0%', marginRight:0, borderRadius:"0em", position:'fixed', top: '62px', zIndex: 1000, height:"100%", width:"40%"}}  >
             <Button.Group widths="3" style={{height:40}} >
               <Button className="ui black compact" toggle active={this.state.selectedLetter==='A'} disabled={!this.state.startingLetters.includes('A')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>A</Button>
@@ -560,27 +737,25 @@ postData(url, data) {
           </Segment>
         </TransitionablePortal>
 
-        {/* <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide down', duration:500}}  closeOnDocumentClick={true} onOpen={this.openKeypad} onClose={this.closeKeypad}>  
+        {/* <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide down', duration:500}}  closeOnDocumentClick={true} onOpen={this.openKeypad} onClose={this.closeKeypad}>
           <Segment inverted style={{ left: '0%', position: 'fixed', top: '54px', zIndex: 1000, width:"100%", height:"auto", borderRadius:0, paddingTop:0, paddingBottom:4}} textAlign="center">
             <Header style={{margin:4}}>{this.state.selectedItem.name}</Header>
             <Header style={{margin:4}}>{this.state.selectedItem.qty + "  " + this.state.selectedItem.unit}</Header>
           </Segment>
         </TransitionablePortal> */}
-        <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide up', duration:300}}  closeOnDocumentClick={false} onClose={this.closeKeypad}>  
+        <TransitionablePortal open={this.state.openKeypad} transition={{animation:'fade up', duration:300}}  closeOnDocumentClick={true} onClose={this.closeKeypad}>
           <Segment textAlign="center" inverted style={{ backgroundColor: '#3A3A3A', left: '0%', padding:0, position: 'fixed', bottom: '0px', zIndex: 5000, width:"100%", height:"auto", borderRadius:0}}>
             <Segment  style={{borderRadius:0, padding:0}} >
             <Grid widths={16} >
               <Grid.Column width={12}>
                 <Dropdown onChange={this.selectItem}
                   floating  button className='icon'  fluid   scrolling   style={{borderRadius:0, padding:14}} defaultValue={this.state.selectedItem.name}
-                    options={ 
+                    options={
                       this.state.items.filter((item, index) => {
-                        if (this.state.selectedItem.tags === item.tags) 
-                          return true;
-                        else  
-                          return false;
+                        return (this.state.selectedItem.tags === item.tags);
+                        // return ((this.state.selectedItem.tags === item.tags && !item.qty && !item.unit) || item.name === this.state.selectedItem.name);
                       }).map(function(i, index) {
-                        return {value: i.name, text:i.name}
+                        return {value: i.name, text: i.name }
                       })
                     }
                   >
@@ -606,7 +781,7 @@ postData(url, data) {
               <List.Item style={{padding:12}} onClick={this.setUnit}>bin</List.Item>
               <List.Item style={{padding:12}} onClick={this.setUnit}>shelf</List.Item>
               <List.Item style={{padding:12}}/>
-            </List> 
+            </List>
            <Segment inverted basic className="ui black" style={{borderRadius:0}}>
               <Button.Group size="big" widths="4" >
                 <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>1</Button>
@@ -634,7 +809,7 @@ postData(url, data) {
               </Button.Group>
             </Segment>
           </Segment>
-        </TransitionablePortal>               
+        </TransitionablePortal>
       </div>
     );
   }
