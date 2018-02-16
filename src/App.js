@@ -138,16 +138,15 @@ class App extends Component {
   
 
   handleClick = (item,e) => {
+    console.log("handleClick: " + item.name);
     // console.log (document.activeElement);
     // console.log(this.input1.inputRef);
     if (this.input1.inputRef === document.activeElement)
       return;
-    console.log("handleClick: " + item.name);
-    this.setState({selectedItem:item})
 //      Without setTimeout the modal has not rendered when focus() is called.
 //      setTimeouts() are executed last in the function all stack so 0 delay works!
-      this.setState({selectedItem:item});//, () => setTimeout(() => this.ref.focus(),0));
-      this.openKeypad();
+    this.setState({selectedItem:item});//, () => setTimeout(() => this.ref.focus(),0));
+    this.openKeypad();
   }
 
   selectItem = (item,e) => {
@@ -393,13 +392,13 @@ class App extends Component {
         </Table>
         {/* <Popup basic inverted  open={this.state.saved} style={{position:'fixed', width:'50%', top:'25%', left:'25%'}}><Container textAlign="center">Saved!</Container></Popup> */}
 
-        <TransitionablePortal open={this.state.openKeypad} transition={{animation:'fade up', duration:300}}  closeOnDocumentClick={true} onClose={this.closeKeypad}>
+        <TransitionablePortal open={this.state.openKeypad} transition={{animation:'fade up', duration:300}} closeOnDocumentClick={false} onClose={this.closeKeypad}>
           <Segment textAlign="center" inverted style={{ backgroundColor: '#3A3A3A', left: '0%', padding:0, position: 'fixed', bottom: '0px', zIndex: 5000, width:"100%", height:"auto", borderRadius:0}}>
             <Segment  style={{borderRadius:0, padding:0}} >
               <Grid widths={16} >
                 <Grid.Column width={12}>
                   <Dropdown onChange={this.selectItem}
-                    floating  button className='icon'  fluid   scrolling   style={{borderRadius:0, padding:14}} defaultValue={this.state.selectedItem.name}
+                    floating  button className='icon'  fluid   scrolling   style={{borderRadius:0, padding:14}} value={this.state.selectedItem.name}
                       options={
                         this.state.items.filter((item, index) => {
                           return (this.state.selectedItem.tags === item.tags);
