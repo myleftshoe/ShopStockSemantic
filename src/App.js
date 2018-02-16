@@ -36,24 +36,17 @@ class App extends Component {
     searchText: "",
     items: [{name:"", qty:"", unit:"", tags:""}],
     openKeypad: false,
-    done: true,
     marked:false,
     selectedItem:{name:"", qty:0, unit:"", tags:""},
-    selectedLetter: "",
-    selectedTag: {name:"", color:"white"},
-    openSearch:false,
-    openNavigator:false,
-    openAZ:false,
-    sortDescending:false,
-    showMore:false,
-    sortByTimestamp: true,
     saved:false,
     changed:false,
     status:"",
-    startingLetters: [],
     sortMode:"None",
     revered:false
   }
+
+
+  // Fetch and save **********************
 
   componentDidMount() {
     fetch(FETCHURL)
@@ -88,7 +81,6 @@ class App extends Component {
     })
   }
 
-
   postData(url, data) {
     return fetch(url, {
       body: JSON.stringify(data), // must match 'Content-Type' header
@@ -100,6 +92,7 @@ class App extends Component {
     .then(response => response.json()) // parses response to JSON
   }
 
+// Item ******************************
 
   deleteItem = (item, e) => {
     const items = Object.assign([], this.state.items);
@@ -117,37 +110,6 @@ class App extends Component {
     }
   }
 
-handleButtonPress = (e) => {
-    this.buttonPressTimer = setTimeout(() => alert('long press activated'), 1500);
-}
-
-handleButtonRelease = (e) => {
-    clearTimeout(this.buttonPressTimer);
-}
-
-
-
-// Search ************************************
-
-  toggleSearch = (e) => {
-    this.setState({openSearch: !this.state.openSearch});
-  }
-
-  onOpenSearch = () => {
-//    setTimeout(() => this.input1.focus(),0);
-    this.setState(() => setTimeout(() => this.input1.focus(),500));
-  }
-
-  closeSearch = (e) => {
-    this.setState({openSearch: false});
-  }
-
-  changeSearchText = (e) => {
-    console.log(e.target.value);
-      this.setState({searchText: e.target.value});
-  }
-
-
   changeItemName = (e) => {
     console.log(e.target.value);
     const items = Object.assign([], this.state.items);
@@ -158,27 +120,6 @@ handleButtonRelease = (e) => {
     this.setState({items:items, selectedItem:_item});
   }
 
-
-
-
-
-  clearSearchText = (e) => {
-    e.target.value = "";
-    // this.value = "";
-    console.log("dsdsd",this.input1.value);
-    // this.input1.setValue("");
-    this.input1.value = "";
-    this.setState({searchText: ""});
-  }
-
-// Done ****************************
-  toggleDone = (e) => {
-    this.setState({done: !this.state.done});//, () => setTimeout(() => this.ref.focus(),0));
-  }
-
-
-
-  handleRef = component => (this.ref = component);
   handleClick = (item,e) => {
     // console.log (document.activeElement);
     // console.log(this.input1.inputRef);
@@ -199,10 +140,28 @@ handleButtonRelease = (e) => {
     const _item = this.state.items[index];
     this.setState({selectedItem:_item});
   }
+ 
+// Search ************************************
 
-  openShowMorePopup = () => {
-    this.setState({showMore:true})
+  changeSearchText = (e) => {
+    console.log(e.target.value);
+      this.setState({searchText: e.target.value});
   }
+
+  clearSearchText = (e) => {
+    e.target.value = "";
+    console.log("changeSearchText: ",this.input1.value);
+    this.input1.value = "";
+    this.setState({searchText: ""});
+  }
+
+  focusSearch = () => {
+    console.log (document.activeElement);
+    console.log(this.input1.inputRef);
+    console.log(this.input1.inputRef === document.activeElement);
+  }
+
+
 
   sendClicked = (e) => {
     this.setState({openDoneModal: !this.state.openDoneModal});//, () => setTimeout(() => this.ref.focus(),0));
@@ -211,7 +170,7 @@ handleButtonRelease = (e) => {
 // Keypad *********************
 
   openKeypad = () => {
-    this.setState({openAZ:false, openNavigator:false, openKeypad: true});
+    this.setState({openKeypad: true});
   }
 
   closeKeypad = () => {
@@ -277,13 +236,7 @@ handleButtonRelease = (e) => {
     return -1;
   }
 
-
-  onFocusSearch = (e) => {
-    console.log("onFocusSearch");
-    this.setState({searchText:""});
-    this.input1.value = "";
-  }
-
+ 
   statusToColor = () => {
     let ret = "black";
     switch (this.state.status) {
@@ -303,12 +256,7 @@ handleButtonRelease = (e) => {
     return ret;
   }
 
-
-  focusSearch = () => {
-    console.log (document.activeElement);
-    console.log(this.input1.inputRef);
-    console.log(this.input1.inputRef === document.activeElement);
-  }
+// Sort ************************
 
   handleSortClick = (e) => {
     console.log("handleSortClick: ", e.target.innerHTML);
