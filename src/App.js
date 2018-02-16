@@ -64,41 +64,41 @@ class App extends Component {
         );
   }
 
-fetchedItems = {};
+  fetchedItems = {};
 
-changed = () => JSON.stringify(this.fetchedItems) === JSON.stringify(this.state.items);
+  changed = () => JSON.stringify(this.fetchedItems) === JSON.stringify(this.state.items);
 
-sendData = () => {
-  this.setState({status:"saving"})
-  this.postData(POSTURL, {Date: (new Date()).toJSON(), Items: this.state.items})
-  .then(data => {
-    console.log(data);
-    if (!data.success)
-      throw "Save failed";
-    this.fetchedItems = data.data.Items;
-    console.log(this.changed());
-    this.setState({saved:true, changed:false, status:"saved"})
-    setTimeout(() => {
-      this.setState({ saved: false, status:"" })
-    }, 500)
-  }) // JSON from `response.json()` call
-  .catch(error => {
-    this.setState({ saved: false, status:"error" })
-    console.error(error)
-  })
-}
+  sendData = () => {
+    this.setState({status:"saving"})
+    this.postData(POSTURL, {Date: (new Date()).toJSON(), Items: this.state.items})
+    .then(data => {
+      console.log(data);
+      if (!data.success)
+        throw "Save failed";
+      this.fetchedItems = data.data.Items;
+      console.log(this.changed());
+      this.setState({saved:true, changed:false, status:"saved"})
+      setTimeout(() => {
+        this.setState({ saved: false, status:"" })
+      }, 500)
+    }) // JSON from `response.json()` call
+    .catch(error => {
+      this.setState({ saved: false, status:"error" })
+      console.error(error)
+    })
+  }
 
 
-postData(url, data) {
-  return fetch(url, {
-    body: JSON.stringify(data), // must match 'Content-Type' header
-    headers: {
-      'content-type': 'application/json'
-    },
-    method: 'PUT',
-  })
-  .then(response => response.json()) // parses response to JSON
-}
+  postData(url, data) {
+    return fetch(url, {
+      body: JSON.stringify(data), // must match 'Content-Type' header
+      headers: {
+        'content-type': 'application/json'
+      },
+      method: 'PUT',
+    })
+    .then(response => response.json()) // parses response to JSON
+  }
 
 
   deleteItem = (item, e) => {
@@ -180,22 +180,16 @@ handleButtonRelease = (e) => {
 
   handleRef = component => (this.ref = component);
   handleClick = (item,e) => {
-    console.log (document.activeElement);
-    console.log(this.input1.inputRef);
-    console.log(this.input1.inputRef === document.activeElement);
+    // console.log (document.activeElement);
+    // console.log(this.input1.inputRef);
     if (this.input1.inputRef === document.activeElement)
       return;
     console.log("row clicked" + item.name);
     this.setState({selectedItem:item})
-
-    // if (this.state.openKeypad && !this.state.showMore)
-    //   this.closeKeypad();
-    // else {
 //      Without setTimeout the modal has not rendered when focus() is called.
 //      setTimeouts() are executed last in the function all stack so 0 delay works!
       this.setState({selectedItem:item});//, () => setTimeout(() => this.ref.focus(),0));
       this.openKeypad();
-    // }
   }
 
   selectItem = (item,e) => {
@@ -226,152 +220,6 @@ handleButtonRelease = (e) => {
     }
   }
 
-// Navigator ************************
-  toggleNavigator = (e) => {
-    if (this.state.openNavigator) {
-      this.setState({openNavigator:false});
-      return;
-    }
-    console.log("toggleNavigator:");
-    this.setState({items: this.state.items.sort(function(i1,i2) {
-      if (i1.tags > i2.tags)
-        return 1
-      if (i1.tags < i2.tags)
-        return -1
-      else {
-        if (i1.name > i2.name)
-          return 1
-        if (i1.name < i2.name)
-          return -1
-      }
-      return 0;
-    })})
-    return;
-    if (this.state.selectedTag.name.length > 0) {
-      this.setState({selectedTag:{name: "", color: "white"}});
-      this.closeNavigator();
-    }
-    else
-      this.setState({openAZ:false, openNavigator:true, openKeypad: false});
-  }
-
-  closeNavigator = () => {
-    if (this.state.openNavigator)
-      this.setState({openNavigator: false});
-  }
-
-  handleTagClick = (e, p) => {
-    e.stopPropagation();
-    console.log(p.children);
-    if (this.state.selectedTag.name === p.children)
-      this.setState({selectedTag:{name: "", color: "white"}});
-    else
-      this.setState({selectedTag: {name:p.children, color:p.color}});
-  //  this.closeNavigator();
-  }
-
-// AZ *****************************************
-
-  toggleShowMore = (e) => {
-    const _items = Object.assign([], this.state.items);
-    const showMore = !this.state.showMore;
-    // _items.sort(function(i1,i2) {
-    //   if (i1.name > i2.name)
-    //     return 1
-    //   if (i1.name < i2.name)
-    //     return -1
-    //   return 0;
-    // });
-    // if (sortDescending)
-    //   _items.reverse();
-    // this.setState({items: _items, sortDescending:sortDescending});
-      this.setState({showMore:showMore});
-    return;
-  }
-
-  toggleSortByTimestamp = (e) => {
-    const _items = Object.assign([], this.state.items);
-    const sortByTimestamp = !this.state.sortByTimestamp;
-    console.log(sortByTimestamp);
-    _items.sort(function(i1,i2) {
-      let d1 = new Date(i1.timestamp);
-      let d2 = new Date(i2.timestamp);
-      if (d1 > d2)
-        return 1
-      if (d1 < d2)
-        return -1
-      return 0;
-    });
-    if (sortByTimestamp)
-      _items.reverse();
-    this.setState({items: _items, sortByTimestamp:sortByTimestamp});
-    return;
-  }
-
-
-  toggleSort = (e) => {
-    const _items = Object.assign([], this.state.items);
-    const sortDescending = !this.state.sortDescending;
-    _items.sort(function(i1,i2) {
-      if (i1.name > i2.name)
-        return 1
-      if (i1.name < i2.name)
-        return -1
-      return 0;
-    });
-    if (sortDescending)
-      _items.reverse();
-    this.setState({items: _items, sortDescending:sortDescending});
-    return;
-  }
-
-  toggleAZ = (e) => {
-    this.setState({items: this.state.items.sort(function(i1,i2) {
-      if (i1.name > i2.name)
-        return 1
-      if (i1.name < i2.name)
-        return -1
-      return 0;
-    })})
-//    return;
-    if (this.state.selectedLetter.length > 0) {
-      this.setState({openAZ: false, selectedLetter:""});
-    }
-    else {
-      if (this.state.openAZ)
-        this.setState({openAZ:false});
-      else
-        this.setState({openAZ:true, openNavigator:false, openKeypad: false});
-    }
- }
-
-  closeAZ = (e) => {
-    this.setState({openAZ: false});
-  }
-
-  onOpenAZ = (e) => {
-    let startLetters=[];
-    this.state.items.forEach((item) => {
-      startLetters.push(item.name.charAt(0).toUpperCase());
-    });
-    let distinctLetters = Array.from(new Set(startLetters));
-    console.log(distinctLetters);
-    this.setState({startingLetters:distinctLetters});
-  }
-
-  selectLetter = (e, p) => {
-    console.log(p);
-    e.stopPropagation();
-    if (this.state.selectedLetter === p.children) {
-      this.deselectLetter();
-    }
-    else
-      this.setState({selectedLetter:p.children});
-  }
-
-  deselectLetter = () => {
-    this.setState({selectedLetter:""});
-  }
 
 // Qty + Unit **************************
 
@@ -515,19 +363,6 @@ handleButtonRelease = (e) => {
   // Render ************************
   render() {
     const items = this.state.items.filter((item, index) => {
-//      console.log(this.state.selectedItem.tags);
-      // if (this.state.selectedLetter.length > 0) {
-      //   if (item.name.charAt(0).toUpperCase() === this.state.selectedLetter.toUpperCase())
-      //     return true;
-      //   else
-      //     return false;
-      // }
-      // if (this.state.selectedTag.name.length > 0) {
-      //   if (item.tags.includes(this.state.selectedTag.name))
-      //     return true;
-      //   else
-      //     return false;
-      // }
       if (this.state.searchText.length === 1) {
         if (item.name.charAt(0).toUpperCase() === this.state.searchText.charAt(0).toUpperCase())
           return true;
@@ -540,16 +375,10 @@ handleButtonRelease = (e) => {
         else
           return false;
       }
-      // if (this.state.done) {
-      //   if (this.state.showMore && this.state.selectedItem.tags === item.tags)
-      //     return true;
-      //   else {
-          if (item.qty || item.unit)
-            return true;
-          else
-            return false;
-
-
+      if (item.qty || item.unit)
+        return true;
+      else
+        return false;
       return true;
     }).map((item,index) => {
       return (
@@ -559,10 +388,6 @@ handleButtonRelease = (e) => {
           selectedItem={this.state.selectedItem}
           deleteEvent={this.deleteItem.bind(this, item)}
           rowClickEvent={this.handleClick.bind(this, item)}
-          // handleButtonPress={this.handleButtonPress.bind(this, item)}
-          // handleButtonRelease={this.handleButtonRelease.bind(this, item)}
-          // handleButtonPress={this.handleButtonPress.bind(this, item)}
-          // handleButtonRelease={this.handleButtonRelease.bind(this, item)}
         > {item.name}</Item>)
     })
 
@@ -582,63 +407,17 @@ handleButtonRelease = (e) => {
         > {item.name}</Item>)
     })
 
-
-    // const itemsByTag = this.state.items.sort(function(i1,i2) {
-    //   if (i1.tags > i2.tags)
-    //     return 1
-    //   if (i1.tags < i2.tags)
-    //     return -1
-    //   else {
-    //     if (i1.name > i2.name)
-    //       return 1
-    //     if (i1.name < i2.name)
-    //       return -1
-    //   }
-    //   return 0;
-    // }).map((item,index) => {
-    //   return (
-    //     <Item
-    //       key={item.name}
-    //       item={item}
-    //       color="orange"
-    //       selectedItem={this.state.selectedItem}
-    //       deleteEvent={this.deleteItem.bind(this, item)}
-    //       rowClickEvent={this.handleClick.bind(this, item)}
-    //     > {item.name}</Item>)
-    // })
-
     return (
-
-
 
       <div>
         <Menu size="huge" widths={16} className="ui fixed compact inverted" style={{height:62}}>
-        {/* <Container> */}
-          {/* <Menu.Item onClick={() => this.input1.focus()}> */}
           <Menu.Item onClick={this.focusSearch}>
             <Input type="text" icon="search" iconPosition="left" onBlur={console.log("onblur")} onFocus={this.clearSearchText} inverted transparent id="searchInput" style={{color:'white',width:'auto'}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}
               onClose={this.clearSearchText} value={this.state.searchText}
             />
           </Menu.Item>
-          {/* </Container> */}
-          {/* <Menu.Item position="right" onClick={this.toggleAZ}>
-            <Icon link style={{fontFamily:'Roboto Black'}} circular>{this.state.selectedLetter.length > 0 ? this.state.selectedLetter : 'AZ'}</Icon>
-          </Menu.Item>           */}
-
-          {/* <Menu.Item position="right">
-            <Icon link name={this.state.showMore ? "add" : "minus"} className={this.state.selectedTag.color} circular onClick={this.toggleShowMore}/>
-          </Menu.Item>               */}
-          {/* <Menu.Item position="right" onClick={this.toggleSortByTimestamp}>
-            <Icon link name={this.state.sortByTimestamp ? "sort numeric ascending" : "sort numeric descending"} circular/>
-          </Menu.Item>
-          <Menu.Item position="right" onClick={this.sendData}>
+          {/* <Menu.Item position="right" onClick={this.sendData}>
             <Icon link name="send" circular/>
-          </Menu.Item>           */}
-          {/* <Menu.Item position="right" onClick={this.toggleSort}>
-            <Icon link name={this.state.sortDescending ? "sort alphabet descending" : "sort alphabet ascending"}/>
-        </Menu.Item> */}
-          {/* <Menu.Item position="right" onClick={this.toggleNavigator}>
-            <Icon link name="grid layout" className={this.state.selectedTag.color} circular/>
           </Menu.Item> */}
           <Menu.Item position="right"  style={{width:72, position:'fixed', top:0, right:0}}>
             <Popup position="bottom right" header="Sort" 
@@ -664,114 +443,30 @@ handleButtonRelease = (e) => {
           </Table.Body>
         </Table>
         {/* <Popup basic inverted  open={this.state.saved} style={{position:'fixed', width:'50%', top:'25%', left:'25%'}}><Container textAlign="center">Saved!</Container></Popup> */}
-        <TransitionablePortal open={this.state.openNavigator} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={false}  onClose={this.closeNavigator}>
-          <Segment size="massive" raised floated="right" inverted style={{ right: '0%', margin:0, padding:0, paddingLeft:1, position: 'fixed', top: '62px', zIndex: 1000, width:"40%", height:"100%",borderRadius:"0em" }} textAlign="center" >
-            <Button.Group vertical compact>
-              <Button color="orange" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Citrus</Button>
-              <Button color="yellow" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Tropical Fruit and Melons</Button>
-              <Button color="violet" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Berries and Grapes</Button>
-              <Button color="blue"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Stone Fruit</Button>
-              <Button color="olive"  onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Apples and Pears</Button>
-              <Button color="green"  onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Leafy Greens</Button>
-              <Button color="brown"  onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Potatoes and Pumpkin</Button>
-              <Button color="purple" onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Root Vegetables</Button>
-              <Button color="teal"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Fruit Vegetable</Button>
-              <Button color="pink"   onClick={this.handleTagClick} style={{borderRadius:"0em", height:46}}>Salads and Sprouts</Button>
-            </Button.Group>
-            {/* <Segment basic textAlign="center" style={{position:'fixed',width:"40%", bottom:0, right:0}}>
-              <Button icon="angle up" size="huge" className="ui black" onClick={this.closeNavigator}></Button>
-            </Segment> */}
-          </Segment>
-        </TransitionablePortal>
 
-        <TransitionablePortal open={this.state.openAZ} transition={{animation:'fade left', duration:500}}  closeOnDocumentClick={false}  onClose={this.closeAZ} onOpen={this.onOpenAZ} >
-          <Segment basic raised floated="right" inverted  style={{right: '0%', marginRight:0, borderRadius:"0em", position:'fixed', top: '62px', zIndex: 1000, height:"100%", width:"40%"}}  >
-            <Button.Group widths="3" style={{height:40}} >
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='A'} disabled={!this.state.startingLetters.includes('A')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>A</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='B'} disabled={!this.state.startingLetters.includes('B')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>B</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='C'} disabled={!this.state.startingLetters.includes('C')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>C</Button>
-            </Button.Group>
-            <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='D'} disabled={!this.state.startingLetters.includes('D')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>D</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='E'} disabled={!this.state.startingLetters.includes('E')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>E</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='F'} disabled={!this.state.startingLetters.includes('F')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>F</Button>
-            </Button.Group>
-            <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='G'} disabled={!this.state.startingLetters.includes('G')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>G</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='H'} disabled={!this.state.startingLetters.includes('H')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>H</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='I'} disabled={!this.state.startingLetters.includes('I')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>I</Button>
-            </Button.Group>
-            <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='J'} disabled={!this.state.startingLetters.includes('J')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>J</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='K'} disabled={!this.state.startingLetters.includes('K')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>K</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='L'} disabled={!this.state.startingLetters.includes('L')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>L</Button>
-            </Button.Group>
-            <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='M'} disabled={!this.state.startingLetters.includes('M')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>M</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='N'} disabled={!this.state.startingLetters.includes('N')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>N</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='O'} disabled={!this.state.startingLetters.includes('O')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>O</Button>
-            </Button.Group>
-            <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='P'} disabled={!this.state.startingLetters.includes('P')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>P</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='Q'} disabled={!this.state.startingLetters.includes('Q')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Q</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='R'} disabled={!this.state.startingLetters.includes('R')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>R</Button>
-            </Button.Group>
-            <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='S'} disabled={!this.state.startingLetters.includes('S')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>S</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='T'} disabled={!this.state.startingLetters.includes('T')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>T</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='U'} disabled={!this.state.startingLetters.includes('U')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>U</Button>
-            </Button.Group>
-            <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='V'} disabled={!this.state.startingLetters.includes('V')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>V</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='W'} disabled={!this.state.startingLetters.includes('W')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>W</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='X'} disabled={!this.state.startingLetters.includes('X')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>X</Button>
-            </Button.Group>
-            <Button.Group widths="3" style={{height:40}}>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='Y'} disabled={!this.state.startingLetters.includes('Y')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Y</Button>
-              <Button className="ui black compact" toggle active={this.state.selectedLetter==='Z'} disabled={!this.state.startingLetters.includes('Z')} onClick={this.selectLetter} style={{borderRadius:"0em"}}>Z</Button>
-              <Button className="ui black compact"/>
-            </Button.Group>
-            {/* <Segment basic textAlign="center" style={{position:'fixed',width:"40%", bottom:0, right:0}}>
-              <Button icon="angle up" size="huge" className="ui black" onClick={this.closeAZ}></Button>
-            </Segment> */}
-          </Segment>
-        </TransitionablePortal>
-
-        {/* <TransitionablePortal open={this.state.openKeypad} transition={{animation:'slide down', duration:500}}  closeOnDocumentClick={true} onOpen={this.openKeypad} onClose={this.closeKeypad}>
-          <Segment inverted style={{ left: '0%', position: 'fixed', top: '54px', zIndex: 1000, width:"100%", height:"auto", borderRadius:0, paddingTop:0, paddingBottom:4}} textAlign="center">
-            <Header style={{margin:4}}>{this.state.selectedItem.name}</Header>
-            <Header style={{margin:4}}>{this.state.selectedItem.qty + "  " + this.state.selectedItem.unit}</Header>
-          </Segment>
-        </TransitionablePortal> */}
         <TransitionablePortal open={this.state.openKeypad} transition={{animation:'fade up', duration:300}}  closeOnDocumentClick={true} onClose={this.closeKeypad}>
           <Segment textAlign="center" inverted style={{ backgroundColor: '#3A3A3A', left: '0%', padding:0, position: 'fixed', bottom: '0px', zIndex: 5000, width:"100%", height:"auto", borderRadius:0}}>
             <Segment  style={{borderRadius:0, padding:0}} >
-            <Grid widths={16} >
-              <Grid.Column width={12}>
-                <Dropdown onChange={this.selectItem}
-                  floating  button className='icon'  fluid   scrolling   style={{borderRadius:0, padding:14}} defaultValue={this.state.selectedItem.name}
-                    options={
-                      this.state.items.filter((item, index) => {
-                        return (this.state.selectedItem.tags === item.tags);
-                        // return ((this.state.selectedItem.tags === item.tags && !item.qty && !item.unit) || item.name === this.state.selectedItem.name);
-                      }).map(function(i, index) {
-                        return {value: i.name, text: i.name }
-                      })
-                    }
-                  >
-                </Dropdown>
-              </Grid.Column>
-              <Grid.Column verticalAlign='middle' width={4} style={{fontSize:17, fontWeight:'bold', paddingLeft:0, paddingRight:28}}>
-                {/* <Label horizontal float="right" pointng="left" onClick={this.openShowMorePopup} color={color(this.state.selectedItem.tags)} style={{borderRadius:"0em", paddingLeft:16, backgroundColor: color(this.state.selectedItem.tags)}}> */}
-                {this.state.selectedItem.qty + " " + this.state.selectedItem.unit}
-                {/* <Label.Detail>{this.state.selectedItem.unit}</Label.Detail> */}
-              {/* </Label> */}
-              </Grid.Column>
-            </Grid>
-
+              <Grid widths={16} >
+                <Grid.Column width={12}>
+                  <Dropdown onChange={this.selectItem}
+                    floating  button className='icon'  fluid   scrolling   style={{borderRadius:0, padding:14}} defaultValue={this.state.selectedItem.name}
+                      options={
+                        this.state.items.filter((item, index) => {
+                          return (this.state.selectedItem.tags === item.tags);
+                          // return ((this.state.selectedItem.tags === item.tags && !item.qty && !item.unit) || item.name === this.state.selectedItem.name);
+                        }).map(function(i, index) {
+                          return {value: i.name, text: i.name }
+                        })
+                      }
+                    >
+                  </Dropdown>
+                </Grid.Column>
+                <Grid.Column verticalAlign='middle' width={4} style={{fontSize:17, fontWeight:'bold', paddingLeft:0, paddingRight:28}}>
+                  {this.state.selectedItem.qty + " " + this.state.selectedItem.unit}
+                </Grid.Column>
+              </Grid>
             </Segment>
-            {/* <Header style={{margin:4}}>{this.state.selectedItem.qty + "  " + this.state.selectedItem.unit}</Header> */}
-            {/* <Divider/> */}
             <List selection divided inverted horizontal style={{marginTop:-18, marginBottom:-16}}>
               <List.Item style={{padding:12}}/>
               <List.Item style={{padding:12}} onClick={this.setUnit}>bags</List.Item>
@@ -782,7 +477,7 @@ handleButtonRelease = (e) => {
               <List.Item style={{padding:12}} onClick={this.setUnit}>shelf</List.Item>
               <List.Item style={{padding:12}}/>
             </List>
-           <Segment inverted basic className="ui black" style={{borderRadius:0}}>
+            <Segment inverted basic className="ui black" style={{borderRadius:0}}>
               <Button.Group size="big" widths="4" >
                 <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>1</Button>
                 <Button className="ui black button" onClick={this.setQty} style={{margin:0, borderRadius:"0em"}}>2</Button>

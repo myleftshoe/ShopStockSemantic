@@ -9,10 +9,6 @@ class Item extends Component {
         return (
             <Table.Row style={{backgroundColor: color(props.item.tags)}} 
                 onClick={props.rowClickEvent} 
-                // onTouchStart={props.handleButtonPress}
-                // onTouchEnd={props.handleButtonRelease} 
-                // onMouseDown={props.handleButtonPress} 
-                // onMouseUp={props.handleButtonRelease} 
             >
                 <Table.Cell width={11}>
                     {props.children}
