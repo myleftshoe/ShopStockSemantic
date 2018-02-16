@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Table, Icon} from 'semantic-ui-react'
+import {Table} from 'semantic-ui-react'
 import color from '../colors';
 
 class Item extends Component {

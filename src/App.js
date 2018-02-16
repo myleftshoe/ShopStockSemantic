@@ -5,26 +5,27 @@ import {
   Dropdown,
   List,
   Icon,
-  Modal,
+//  Modal,
   Input,
   Divider,
-  Image,
-  Label,
-  Form,
-  Rail,
-  Search,
-  Table, Grid,
-  Transition,
-  Container,
+//  Image,
+//  Label,
+//  Form,
+//  Rail,
+//  Search,
+  Table, 
+  Grid,
+//  Transition,
+//  Container,
   Popup,
-  Header,
+//  Header,
   Menu,
   Segment,
   TransitionablePortal
 } from 'semantic-ui-react';
-import TransitionGroup from 'semantic-ui-react/dist/commonjs/modules/Transition/TransitionGroup';
+//import TransitionGroup from 'semantic-ui-react/dist/commonjs/modules/Transition/TransitionGroup';
 import Item from "./components/Item";
-import color from './colors'
+//import color from './colors'
 
 const POSTURL = "https://api.jsonbin.io/b/5a84f744849a8f1c811922ad";
 // const FETCHURL = "https://api.jsonbin.io/b/5a7cfa997ecc101273331408";
@@ -67,7 +68,7 @@ class App extends Component {
     .then(data => {
       console.log(data);
       if (!data.success)
-        throw "Save failed";
+        throw new Error("Save failed");
       this.fetchedItems = data.data.Items;
       console.log(this.changed());
       this.setState({saved:true, changed:false, status:"saved"})
@@ -125,7 +126,7 @@ class App extends Component {
     // console.log(this.input1.inputRef);
     if (this.input1.inputRef === document.activeElement)
       return;
-    console.log("row clicked" + item.name);
+    console.log("handleClick: " + item.name);
     this.setState({selectedItem:item})
 //      Without setTimeout the modal has not rendered when focus() is called.
 //      setTimeouts() are executed last in the function all stack so 0 delay works!
@@ -134,9 +135,9 @@ class App extends Component {
   }
 
   selectItem = (item,e) => {
-    console.log("selectItem:" + e.value);
+    console.log("selectItem: " + e.value);
     const index = this.findItemIndexByName(e.value);
-    console.log(index);
+//    console.log(index);
     const _item = this.state.items[index];
     this.setState({selectedItem:_item});
   }
@@ -193,7 +194,7 @@ class App extends Component {
   }
 
   setQty = (item,e) => {
-    console.log(e.children);
+//    console.log(e.children);
     const items = Object.assign([], this.state.items);
     const index = this.findItemIndexByName(this.state.selectedItem.name);
     const _item = items[index];
@@ -252,7 +253,6 @@ class App extends Component {
       default :
         ret = "black";
     }
-    console.log(ret);
     return ret;
   }
 
@@ -327,7 +327,7 @@ class App extends Component {
         return true;
       else
         return false;
-      return true;
+//      return true;
     }).map((item,index) => {
       return (
         <Item
@@ -339,28 +339,13 @@ class App extends Component {
         > {item.name}</Item>)
     })
 
-    const relatedItems = this.state.items.filter((item, index) => {
-      if (this.state.selectedItem.tags === item.tags)
-        return true;
-      else
-        return false;
-    }).map((item,index) => {
-      return (
-        <Item
-          key={item.name}
-          item={item}
-          selectedItem={this.state.selectedItem}
-          deleteEvent={this.deleteItem.bind(this, item)}
-          rowClickEvent={this.handleClick.bind(this, item)}
-        > {item.name}</Item>)
-    })
 
     return (
 
       <div>
         <Menu size="huge" widths={16} className="ui fixed compact inverted" style={{height:62}}>
           <Menu.Item onClick={this.focusSearch}>
-            <Input type="text" icon="search" iconPosition="left" onBlur={console.log("onblur")} onFocus={this.clearSearchText} inverted transparent id="searchInput" style={{color:'white',width:'auto'}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}
+            <Input type="text" icon="search" iconPosition="left" onFocus={this.clearSearchText} inverted transparent id="searchInput" style={{color:'white',width:'auto'}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}
               onClose={this.clearSearchText} value={this.state.searchText}
             />
           </Menu.Item>

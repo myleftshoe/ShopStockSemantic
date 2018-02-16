@@ -73,6 +73,7 @@ const color = (tag) => {
             color = "Maroon"
             break;
         }  
+        default : color = "";
     }
     return color;
 }
