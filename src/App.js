@@ -25,6 +25,7 @@ import {
 } from 'semantic-ui-react';
 //import TransitionGroup from 'semantic-ui-react/dist/commonjs/modules/Transition/TransitionGroup';
 import Item from "./components/Item";
+import EmailComposer from "./components/EmailComposer";
 //import color from './colors'
 
 const POSTURL = "https://api.jsonbin.io/b/5a84f744849a8f1c811922ad";
@@ -43,7 +44,8 @@ class App extends Component {
     changed:false,
     status:"",
     sortMode:"None",
-    revered:false
+    revered:false,
+    openEmailComposer:false
   }
 
 
@@ -61,6 +63,18 @@ class App extends Component {
   fetchedItems = {};
 
   changed = () => JSON.stringify(this.fetchedItems) === JSON.stringify(this.state.items);
+
+  handleSaveSendButtonClick = () => {
+    if (this.state.changed) {
+      this.sendData();
+      return;
+    }
+    this.setState({openEmailComposer:true})
+  }
+
+  closeEmailComposer = () => {
+    this.setState({openEmailComposer:false})
+  }
 
   sendData = () => {
     this.setState({status:"saving"})
@@ -121,6 +135,8 @@ class App extends Component {
     this.setState({items:items, selectedItem:_item});
   }
 
+  
+
   handleClick = (item,e) => {
     // console.log (document.activeElement);
     // console.log(this.input1.inputRef);
@@ -165,7 +181,7 @@ class App extends Component {
 
 
   sendClicked = (e) => {
-    this.setState({openDoneModal: !this.state.openDoneModal});//, () => setTimeout(() => this.ref.focus(),0));
+    this.setState({openEmailComposer: !this.state.openEmailComposer});//, () => setTimeout(() => this.ref.focus(),0));
   }
 
 // Keypad *********************
@@ -343,6 +359,7 @@ class App extends Component {
     return (
 
       <div>
+        <EmailComposer items={this.state.items} open={this.state.openEmailComposer} onClose={this.closeEmailComposer.bind(this)}/>
         <Menu size="huge" widths={16} className="ui fixed compact inverted" style={{height:62}}>
           <Menu.Item onClick={this.focusSearch}>
             <Input type="text" icon="search" iconPosition="left" onFocus={this.clearSearchText} inverted transparent id="searchInput" style={{color:'white',width:'auto'}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}
@@ -368,13 +385,13 @@ class App extends Component {
             </Popup>
           </Menu.Item>
         </Menu>
-        <Button color={this.statusToColor()} size="huge" circular icon={this.state.changed?"save":"send"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.sendData}/>
+        <Button color={this.statusToColor()} size="huge" circular icon={this.state.changed?"save":"copy"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.handleSaveSendButtonClick}/>
         <Table inverted unstackable selectable={false} striped={false} singleLine fixed width={16} style={{marginTop:62, marginBottom:'100%'}}>
           <Table.Body>
             {items}
           </Table.Body>
         </Table>
-        {/* <Popup basic inverted  open={this.state.saved} style={{position:'fixed', width:'50%', top:'25%', left:'25%'}}><Container textAlign="center">Saved!</Container></Popup> */}
+        <Popup basic inverted  open={this.state.saved} style={{position:'fixed', width:'50%', top:'25%', left:'25%'}}><Container textAlign="center">Saved!</Container></Popup>
 
         <TransitionablePortal open={this.state.openKeypad} transition={{animation:'fade up', duration:300}}  closeOnDocumentClick={true} onClose={this.closeKeypad}>
           <Segment textAlign="center" inverted style={{ backgroundColor: '#3A3A3A', left: '0%', padding:0, position: 'fixed', bottom: '0px', zIndex: 5000, width:"100%", height:"auto", borderRadius:0}}>
