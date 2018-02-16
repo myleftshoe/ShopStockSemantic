@@ -385,13 +385,13 @@ class App extends Component {
             </Popup>
           </Menu.Item>
         </Menu>
-        <Button color={this.statusToColor()} size="huge" circular icon={this.state.changed?"save":"copy"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.handleSaveSendButtonClick}/>
+        <Button color={this.statusToColor()} size="huge" circular icon={this.state.changed?"save":"check"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.handleSaveSendButtonClick}/>
         <Table inverted unstackable selectable={false} striped={false} singleLine fixed width={16} style={{marginTop:62, marginBottom:'100%'}}>
           <Table.Body>
             {items}
           </Table.Body>
         </Table>
-        <Popup basic inverted  open={this.state.saved} style={{position:'fixed', width:'50%', top:'25%', left:'25%'}}><Container textAlign="center">Saved!</Container></Popup>
+        {/* <Popup basic inverted  open={this.state.saved} style={{position:'fixed', width:'50%', top:'25%', left:'25%'}}><Container textAlign="center">Saved!</Container></Popup> */}
 
         <TransitionablePortal open={this.state.openKeypad} transition={{animation:'fade up', duration:300}}  closeOnDocumentClick={true} onClose={this.closeKeypad}>
           <Segment textAlign="center" inverted style={{ backgroundColor: '#3A3A3A', left: '0%', padding:0, position: 'fixed', bottom: '0px', zIndex: 5000, width:"100%", height:"auto", borderRadius:0}}>
