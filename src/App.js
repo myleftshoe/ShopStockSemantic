@@ -436,7 +436,6 @@ handleButtonRelease = (e) => {
           </Menu.Item>
         </Menu>
         <Button color={this.statusToColor()} size="huge" circular icon={this.state.changed?"save":"send"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.sendData}/>
-        {/* <Button secondary  size="huge" circular icon={this.state.done ? "add":"check"} style={{position: 'fixed', bottom:32, right:32, display:'block', zIndex:700  }} onClick={this.toggleDone}/>     */}
         <Table inverted unstackable selectable={false} striped={false} singleLine fixed width={16} style={{marginTop:62, marginBottom:'100%'}}>
           <Table.Body>
             {items}
