@@ -172,6 +172,7 @@ class App extends Component {
   }
 
   focusSearch = () => {
+    this.closeKeypad();
     console.log (document.activeElement);
     console.log(this.input1.inputRef);
     console.log(this.input1.inputRef === document.activeElement);
@@ -359,7 +360,7 @@ class App extends Component {
 
       <div>
         <EmailComposer items={this.state.items} open={this.state.openEmailComposer} onClose={this.closeEmailComposer.bind(this)}/>
-        <Menu size="huge" widths={16} className="ui fixed compact inverted" style={{height:62}}>
+        <Menu size="huge" widths={16} className="ui fixed compact inverted" style={{height:62}} onClick={this.closeKeypad}>
           <Menu.Item onClick={this.focusSearch}>
             <Input type="text" icon="search" iconPosition="left" onFocus={this.clearSearchText} inverted transparent id="searchInput" style={{color:'white',width:'auto'}} ref={input1 => this.input1 = input1} onChange={this.changeSearchText.bind(this)}
               onClose={this.clearSearchText} value={this.state.searchText}
